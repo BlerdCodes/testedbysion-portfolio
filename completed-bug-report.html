@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lotus's Bug Reporting - Completed Example</title>
+    <style>
+      :root {
+        --bg: #f4f5f7;
+        --panel: #ffffff;
+        --panel-alt: #fafbfc;
+        --line: #dfe3eb;
+        --line-strong: #c7ceda;
+        --text: #1f2a37;
+        --muted: #627089;
+        --blue: #0052cc;
+        --blue-soft: #edf3ff;
+        --nav: #1d2736;
+        --shadow: rgba(15, 23, 42, 0.08);
+        --minor: #dfeaff;
+        --major: #ffe7b8;
+        --critical: #ffd7d7;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text);
+      }
+
+      .topbar {
+        height: 52px;
+        background: var(--nav);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px;
+        color: #eaf0ff;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+      }
+
+      .brand-mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, #6ca4ff, #1d4ed8);
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .page {
+        max-width: 1180px;
+        margin: 20px auto;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 26px var(--shadow);
+      }
+
+      .issue-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px 12px;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel-alt);
+      }
+
+      .issue-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .issue-key {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .issue-status {
+        border: 1px solid #cfe0ff;
+        background: var(--blue-soft);
+        color: var(--blue);
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 16px;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .field-row:last-child {
+        border-bottom: none;
+      }
+
+      .field-label {
+        padding-top: 9px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .field-value {
+        background: #fff;
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        padding: 10px 12px;
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        color: var(--text);
+      }
+
+      .field-value.textarea {
+        min-height: 104px;
+        align-items: flex-start;
+        white-space: pre-line;
+        line-height: 1.5;
+      }
+
+      .tag {
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+
+      .major { background: var(--major); border-color: #f0d087; color: #8a5a00; }
+
+      .media-box {
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        padding: 18px;
+        background: linear-gradient(135deg, #f8fbff, #f5f7fb);
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      @media (max-width: 640px) {
+        .field-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <span>Lotus's Bug Reporting</span>
+      </div>
+      <div class="brand" style="font-size: 12px; opacity: 0.9;">Completed Example</div>
+    </header>
+
+    <main class="page">
+      <div class="issue-header">
+        <div class="issue-meta">
+          <span class="issue-key">BUG-2457</span>
+          <span class="issue-status">Open</span>
+        </div>
+        <div class="header-actions" style="display:flex; gap:10px; align-items:center;">
+          <button class="btn" type="button" onclick="window.location.href='jira-bug-report-training.html'">Back to form</button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Summary</div>
+        <div class="field-value">[Bug] Character model flickers during cutscene transitions</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Description</div>
+        <div class="field-value textarea">The character model briefly flickers, clips through the environment, and snaps back into position when entering a zone transition during gameplay. This issue is most noticeable when moving between open-world map sections and during scripted scene transitions.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Repro rate</div>
+        <div class="field-value">8/10 - 80%</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Severity</div>
+        <div class="field-value"><span class="tag major">major</span></div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Environment</div>
+        <div class="field-value">gameplay</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Steps to reproduce</div>
+        <div class="field-value textarea">1. Launch the game and load a saved campaign file.
+2. Travel to a map transition area or loading gate.
+3. Walk toward the trigger while the scene begins to change.
+4. Observe the player mesh flicker and briefly clip into the terrain.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Actual behavior</div>
+        <div class="field-value textarea">The same character model temporarily disappears, flickers, and reappears offset or intersecting the ground during loading transitions. The bug interrupts the player experience and can make movement feel inconsistent.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Expected behavior</div>
+        <div class="field-value textarea">The character should transition cleanly into the next area without clipping, disappearing, or losing alignment with the environment. The animation and mesh should remain stable throughout the transition.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Build</div>
+        <div class="field-value">1.7.4</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Labels</div>
+        <div class="field-value">visual, animation, gameplay</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Media</div>
+        <div class="field-value">
+          <div class="media-box">Screenshot / video attachment</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Additional notes</div>
+        <div class="field-value textarea">Occurs more frequently after changing outfits in the character creator. Temporary workaround: lower shadow quality. The issue still appears on mid-range hardware, though it is more visible on high-detail settings.</div>
+      </div>
+    </main>
+  </body>
+</html>

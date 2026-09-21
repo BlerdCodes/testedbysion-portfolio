@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sion's QA Portfolio</title>
+  <style>
+    :root { --ink:#17221f; --muted:#63736c; --paper:#f4f1e9; --card:#fffdf8; --line:#d8d8c9; --accent:#b64f32; --teal:#1f6b63; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Georgia,"Times New Roman",serif; line-height:1.5; }
+    .wrap { max-width:1180px; margin:auto; padding:32px 22px 72px; }
+    .hero { padding:56px 0 42px; border-bottom:1px solid var(--line); }
+    .eyebrow { color:var(--accent); font:700 11px/1.2 Arial,sans-serif; letter-spacing:.16em; text-transform:uppercase; }
+    h1 { font-size:clamp(42px,7vw,82px); line-height:.98; max-width:800px; margin:18px 0; }
+    .intro { max-width:650px; font-size:20px; color:var(--muted); }
+    .profile,.metrics { display:flex; gap:8px; flex-wrap:wrap; margin-top:24px; }
+    .profile span,.metrics span,.pill { border:1px solid var(--line); border-radius:999px; padding:7px 11px; background:#f7faf5; color:var(--teal); font:700 11px Arial,sans-serif; }
+    .game-section { padding:44px 0; border-bottom:1px solid var(--line); }
+    .game-heading { display:flex; align-items:end; justify-content:space-between; gap:20px; }
+    .game-heading a { color:var(--ink); text-decoration:none; border-bottom:2px solid var(--accent); }
+    .game-heading a:hover, .game-heading a:focus-visible { color:var(--accent); }
+    h2 { font-size:42px; line-height:1; margin:10px 0 0; }
+    .columns { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:22px; }
+    .columns h3 { color:var(--muted); font:700 12px Arial,sans-serif; letter-spacing:.1em; text-transform:uppercase; }
+    .item { background:var(--card); border:1px solid var(--line); padding:16px; margin-bottom:12px; box-shadow:4px 4px 0 rgba(31,107,99,.08); }
+    .item { cursor:pointer; transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+    .item:hover, .item:focus-visible { transform:translateY(-3px); border-color:var(--teal); box-shadow:7px 7px 0 rgba(31,107,99,.14); outline:none; }
+    .item::after { content:"Open details"; display:block; margin-top:14px; color:var(--accent); font:700 10px Arial,sans-serif; letter-spacing:.08em; text-transform:uppercase; }
+    .item-top { display:flex; justify-content:space-between; gap:8px; align-items:center; color:var(--teal); font:700 11px Arial,sans-serif; text-transform:uppercase; }
+    h4 { font-size:18px; line-height:1.15; margin:10px 0 8px; }
+    .item p { color:var(--muted); margin:0 0 10px; font-size:14px; }
+    .item small { color:var(--accent); font:700 10px Arial,sans-serif; letter-spacing:.04em; text-transform:uppercase; }
+    .pill { padding:4px 8px; font-size:10px; }
+    .critical { color:#a33434; background:#ffe8e8; }
+    .major { color:#a76500; background:#fff5d9; }
+    .minor { color:#3b5cc0; background:#edf3ff; }
+    .portfolio-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:28px; }
+    .portfolio-actions a { display:inline-block; padding:10px 14px; border:1px solid var(--teal); color:var(--teal); text-decoration:none; font:700 12px Arial,sans-serif; }
+    .portfolio-actions a.primary { background:var(--teal); color:#fff; }
+    .detail-backdrop { position:fixed; inset:0; display:none; place-items:center; padding:20px; background:rgba(23,34,31,.58); z-index:10; }
+    .detail-backdrop.open { display:grid; }
+    .detail-dialog { width:min(680px,100%); max-height:min(720px,90vh); overflow:auto; background:var(--card); border:1px solid var(--line); padding:28px; box-shadow:10px 10px 0 rgba(0,0,0,.14); }
+    .detail-dialog h2 { font-size:34px; margin:10px 0; }
+    .detail-dialog p { color:var(--muted); white-space:pre-line; }
+    .detail-context { color:var(--accent); font:700 11px Arial,sans-serif; letter-spacing:.1em; text-transform:uppercase; }
+    .detail-close { float:right; border:1px solid var(--line); background:transparent; color:var(--ink); padding:7px 10px; cursor:pointer; font:700 12px Arial,sans-serif; }
+    .detail-dialog .detail-body { margin-top:18px; padding-top:18px; border-top:1px solid var(--line); }
+    .footer { padding-top:32px; color:var(--muted); font:12px Arial,sans-serif; }
+    @media (max-width:800px) { .columns { grid-template-columns:1fr; } .game-heading { display:block; } h2 { font-size:34px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <span class="eyebrow">Sion's QA Portfolio</span>
+      <h1>Finding the moments that break the experience.</h1>
+      <p class="intro">A practical sample of structured bug reporting, regression thinking, and game QA task planning across three very different game worlds.</p>
+      <div class="profile">
+        <span>Bug triage</span><span>Reproduction analysis</span><span>Regression design</span><span>QA tester and analyst workflows</span>
+      </div>
+      <div class="portfolio-actions">
+        <a class="primary" href="lotus-qa-lab.html">Open interactive QA lab</a>
+        <a href="portfolio.html" download="sions-qa-portfolio.html">Download portfolio copy</a>
+      </div>
+    </header>
+
+    <section class="game-section">
+      <div class="game-heading"><div><span class="eyebrow">QA portfolio sample</span><h2><a href="elden-ring.html">Elden Ring</a></h2></div><div class="metrics"><span>3 bug reports</span><span>2 test cases</span><span>2 tasks</span></div></div>
+      <div class="columns">
+        <div><h3>Bug reports</h3>
+          <article class="item"><div class="item-top"><strong>ER-101</strong><span class="pill major">Major</span></div><h4>Spirit Ash summon fails near a catacomb entrance</h4><p>Prompt disappears after fast travel and requires an area reload.</p><small>Gameplay | 80% repro | Open</small></article>
+          <article class="item"><div class="item-top"><strong>ER-102</strong><span class="pill minor">Minor</span></div><h4>Torrent remains unavailable after a cave elevator transition</h4><p>Mount action stays disabled until the map is opened and closed.</p><small>Map / Visual | 60% repro | In Progress</small></article>
+          <article class="item"><div class="item-top"><strong>ER-103</strong><span class="pill major">Major</span></div><h4>Boss health bar disappears after a phase transition</h4><p>Damage continues while the HUD gives no visible health feedback.</p><small>Gameplay | 40% repro | Review</small></article>
+        </div>
+        <div><h3>Test cases</h3>
+          <article class="item"><div class="item-top"><strong>Fail</strong><span class="pill">Regression</span></div><h4>Spirit Ash prompt appears in a valid encounter area</h4><p>Equip bell, enter encounter, verify prompt, repeat after fast travel.</p></article>
+          <article class="item"><div class="item-top"><strong>Pass</strong><span class="pill">Regression</span></div><h4>Boss HUD remains visible during phase transition</h4><p>Trigger phase change and verify health display and damage updates.</p></article>
+        </div>
+        <div><h3>Tasks</h3>
+          <article class="item"><div class="item-top"><strong>In Progress</strong><span class="pill">QA Tester</span></div><h4>Capture summon-state logs around catacomb transitions</h4><p>Compare fast travel and grace reload paths.</p></article>
+          <article class="item"><div class="item-top"><strong>Backlog</strong><span class="pill">QA Analyst</span></div><h4>Add phase-transition HUD regression coverage</h4><p>Include remembrance bosses with two phases.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="game-section">
+      <div class="game-heading"><div><span class="eyebrow">QA portfolio sample</span><h2><a href="nba-2k27.html">NBA 2K27</a></h2></div><div class="metrics"><span>3 bug reports</span><span>2 test cases</span><span>2 tasks</span></div></div>
+      <div class="columns">
+        <div><h3>Bug reports</h3>
+          <article class="item"><div class="item-top"><strong>NBA-201</strong><span class="pill critical">Critical</span></div><h4>MyCAREER badge progress does not update after a completed game</h4><p>Tracked actions do not change the post-game progression value.</p><small>Gameplay | 90% repro | Open</small></article>
+          <article class="item"><div class="item-top"><strong>NBA-202</strong><span class="pill major">Major</span></div><h4>Shot meter setting resets after practice</h4><p>Custom setting is lost when returning to the City.</p><small>Main Menu | 70% repro | In Progress</small></article>
+          <article class="item"><div class="item-top"><strong>NBA-203</strong><span class="pill minor">Minor</span></div><h4>Crowd audio loops after an online timeout</h4><p>A short reaction repeats until the next whistle.</p><small>Audio | 50% repro | Resolved</small></article>
+        </div>
+        <div><h3>Test cases</h3>
+          <article class="item"><div class="item-top"><strong>Fail</strong><span class="pill">Progression</span></div><h4>MyCAREER badge progress updates after a completed game</h4><p>Record progress, perform action, complete game, compare values.</p></article>
+          <article class="item"><div class="item-top"><strong>Fail</strong><span class="pill">Persistence</span></div><h4>Shot meter preference persists between modes</h4><p>Set preference, enter practice, return to City, verify settings.</p></article>
+        </div>
+        <div><h3>Tasks</h3>
+          <article class="item"><div class="item-top"><strong>In Progress</strong><span class="pill">QA Analyst</span></div><h4>Verify MyCAREER badge progression across save states</h4><p>Record before and after values online and offline.</p></article>
+          <article class="item"><div class="item-top"><strong>Backlog</strong><span class="pill">QA Tester</span></div><h4>Build controller settings persistence matrix</h4><p>Cover Practice, City, MyTEAM, and restart paths.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="game-section">
+      <div class="game-heading"><div><span class="eyebrow">QA portfolio sample</span><h2><a href="silent-hill-f.html">Silent Hill f</a></h2></div><div class="metrics"><span>3 bug reports</span><span>2 test cases</span><span>2 tasks</span></div></div>
+      <div class="columns">
+        <div><h3>Bug reports</h3>
+          <article class="item"><div class="item-top"><strong>SH-301</strong><span class="pill major">Major</span></div><h4>Flashlight beam clips through a hospital wall</h4><p>Light reveals props behind solid geometry at a wall seam.</p><small>Map / Visual | 80% repro | Open</small></article>
+          <article class="item"><div class="item-top"><strong>SH-302</strong><span class="pill major">Major</span></div><h4>Radio static continues after an enemy leaves</h4><p>Warning state remains active until a checkpoint reload.</p><small>Audio | 60% repro | In Progress</small></article>
+          <article class="item"><div class="item-top"><strong>SH-303</strong><span class="pill minor">Minor</span></div><h4>Puzzle note text overlaps the inventory panel</h4><p>Final translated lines are hidden at a 16:10 aspect ratio.</p><small>Main Menu | 100% repro | Review</small></article>
+        </div>
+        <div><h3>Test cases</h3>
+          <article class="item"><div class="item-top"><strong>Fail</strong><span class="pill">Lighting</span></div><h4>Flashlight beam respects wall occlusion</h4><p>Inspect the hospital wall seam and adjacent room for leakage.</p></article>
+          <article class="item"><div class="item-top"><strong>Pass</strong><span class="pill">Compatibility</span></div><h4>Puzzle note remains readable at 16:10</h4><p>Collect note, open inventory, and verify every line is readable.</p></article>
+        </div>
+        <div><h3>Tasks</h3>
+          <article class="item"><div class="item-top"><strong>Blocked</strong><span class="pill">QA Tester</span></div><h4>Run flashlight occlusion sweep across hospital rooms</h4><p>Waiting for the lighting test build.</p></article>
+          <article class="item"><div class="item-top"><strong>Done</strong><span class="pill">QA Analyst</span></div><h4>Add 16:10 localization layout pass</h4><p>Validated puzzle notes and inventory panels.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">Fictional training artifacts created to demonstrate game QA practice. The full editable dataset is available from the Lotus QA Lab app.</footer>
+  </main>
+  <div id="detailBackdrop" class="detail-backdrop" aria-hidden="true">
+    <section class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <button id="detailClose" class="detail-close" type="button">Close</button>
+      <span id="detailContext" class="detail-context"></span>
+      <h2 id="detailTitle"></h2>
+      <div id="detailBody" class="detail-body"></div>
+    </section>
+  </div>
+  <script>
+    const detailBackdrop = document.getElementById("detailBackdrop");
+    const detailClose = document.getElementById("detailClose");
+    const detailContext = document.getElementById("detailContext");
+    const detailTitle = document.getElementById("detailTitle");
+    const detailBody = document.getElementById("detailBody");
+
+    function closeDetails() {
+      detailBackdrop.classList.remove("open");
+      detailBackdrop.setAttribute("aria-hidden", "true");
+    }
+
+    function openDetails(card) {
+      const game = card.closest(".game-section").querySelector("h2").textContent;
+      const category = card.parentElement.querySelector("h3").textContent;
+      const title = card.querySelector("h4").textContent;
+      const content = Array.from(card.querySelectorAll("p, small")).map(item => item.textContent).join("\n\n");
+      detailContext.textContent = `${game} / ${category}`;
+      detailTitle.textContent = title;
+      detailBody.textContent = content;
+      detailBackdrop.classList.add("open");
+      detailBackdrop.setAttribute("aria-hidden", "false");
+      detailClose.focus();
+    }
+
+    document.querySelectorAll(".item").forEach(card => {
+      card.setAttribute("tabindex", "0");
+      card.setAttribute("role", "button");
+      card.addEventListener("click", () => openDetails(card));
+      card.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openDetails(card);
+        }
+      });
+    });
+
+    detailClose.addEventListener("click", closeDetails);
+    detailBackdrop.addEventListener("click", event => {
+      if (event.target === detailBackdrop) closeDetails();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeDetails();
+    });
+  </script>
+</body>
+</html>

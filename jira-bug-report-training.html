@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lotus's Bug Reporting</title>
+    <style>
+      :root {
+        --bg: #f4f5f7;
+        --panel: #ffffff;
+        --panel-alt: #fafbfc;
+        --line: #dfe3eb;
+        --line-strong: #c7ceda;
+        --text: #1f2a37;
+        --muted: #627089;
+        --blue: #0052cc;
+        --blue-soft: #edf3ff;
+        --nav: #1d2736;
+        --nav-2: #243244;
+        --shadow: rgba(15, 23, 42, 0.08);
+        --minor: #dfeaff;
+        --major: #ffe7b8;
+        --critical: #ffd7d7;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text);
+      }
+
+      .topbar {
+        height: 52px;
+        background: var(--nav);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px;
+        color: #eaf0ff;
+        box-shadow: 0 1px 0 rgba(0,0,0,0.12);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .brand-mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, #6ca4ff, #1d4ed8);
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .page {
+        max-width: 1180px;
+        margin: 20px auto;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 26px var(--shadow);
+      }
+
+      .issue-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px 12px;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel-alt);
+      }
+
+      .issue-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .issue-key {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .issue-id-field {
+        width: 118px;
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 8px 10px;
+      }
+
+      .issue-status {
+        border: 1px solid #cfe0ff;
+        background: var(--blue-soft);
+        color: var(--blue);
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .issue-status.status-in-progress {
+        background: #fff1cf;
+        border-color: #f3d787;
+        color: #8a5b00;
+      }
+
+      .issue-status.status-resolved {
+        background: #dff7e8;
+        border-color: #b4e3c3;
+        color: #136b3d;
+      }
+
+      .issue-status.status-closed {
+        background: #e8eaf2;
+        border-color: #d1d7e6;
+        color: #49546d;
+      }
+
+      .issue-status-select {
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+        padding: 8px 10px;
+        min-width: 140px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .tabbar {
+        display: flex;
+        gap: 8px;
+        padding: 14px 24px 0;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel-alt);
+      }
+
+      .tab {
+        border: 1px solid var(--line-strong);
+        border-bottom: none;
+        background: #fff;
+        color: var(--muted);
+        padding: 10px 14px;
+        border-radius: 8px 8px 0 0;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .tab.active {
+        background: var(--blue-soft);
+        color: var(--blue);
+        border-color: #cfe0ff;
+      }
+
+      .issue-link {
+        border: 0;
+        background: transparent;
+        color: var(--blue);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        cursor: pointer;
+        padding: 4px 0;
+      }
+
+      .issue-link:hover { text-decoration: underline; }
+
+      .issue-list {
+        padding: 20px 24px 28px;
+      }
+
+      .view-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .view-heading h2 { margin: 0; font-size: 20px; }
+      .view-heading p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+
+      .issue-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+
+      .issue-table th,
+      .issue-table td {
+        border-bottom: 1px solid var(--line);
+        padding: 13px 10px;
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      .issue-table th {
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .issue-table a,
+      .board-card a {
+        color: var(--blue);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .issue-table a:hover,
+      .board-card a:hover { text-decoration: underline; }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(190px, 1fr));
+        gap: 14px;
+        padding: 0 24px 28px;
+      }
+
+      .board-column {
+        min-height: 240px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel-alt);
+        padding: 12px;
+      }
+
+      .board-column h3 {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .board-card {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--panel);
+        padding: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px var(--shadow);
+      }
+
+      .board-card:last-child { margin-bottom: 0; }
+      .board-card p { margin: 7px 0 10px; font-size: 13px; line-height: 1.35; }
+      .board-card-meta { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 11px; }
+
+      .board-card[draggable="true"] { cursor: grab; }
+      .board-card.dragging { opacity: 0.45; }
+      .board-column.drag-over { outline: 2px dashed var(--blue); outline-offset: -4px; }
+
+      .empty-state {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.4;
+        padding: 8px 2px;
+      }
+
+      .btn {
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        font-weight: 600;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) 280px;
+      }
+
+      .main {
+        padding: 0;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 16px;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .field-row:last-child {
+        border-bottom: none;
+      }
+
+      .field-label {
+        padding-top: 9px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .field-value {
+        width: 100%;
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+        padding: 10px 12px;
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+      }
+
+      .field-value.textarea {
+        min-height: 104px;
+        align-items: flex-start;
+        white-space: pre-line;
+        line-height: 1.5;
+      }
+
+      .field-input {
+        width: 100%;
+      }
+
+      input[type="text"], select, textarea {
+        width: 100%;
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        font: inherit;
+        padding: 10px 12px;
+      }
+
+      textarea {
+        min-height: 104px;
+        resize: vertical;
+      }
+
+      .summary-input {
+        font-size: 18px;
+        font-weight: 600;
+        padding: 12px 14px;
+      }
+
+      .sidebar {
+        border-left: 1px solid var(--line);
+        background: var(--panel-alt);
+        padding: 18px 18px 28px;
+      }
+
+      .side-section {
+        margin-bottom: 22px;
+      }
+
+      .side-title {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .meta-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .meta-item:first-child {
+        border-top: none;
+      }
+
+      .meta-label {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .tag {
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+
+      .minor { background: var(--minor); border-color: #cddfff; color: #2859b3; }
+      .major { background: var(--major); border-color: #f0d087; color: #8a5a00; }
+      .critical { background: var(--critical); border-color: #f0b3b3; color: #9d2c2c; }
+
+      @media (max-width: 900px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .board { grid-template-columns: repeat(2, minmax(190px, 1fr)); }
+
+        .sidebar {
+          border-left: none;
+          border-top: 1px solid var(--line);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .field-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .issue-header {
+          display: block;
+        }
+
+        .header-actions {
+          margin-top: 12px;
+        }
+
+        .issue-table { display: block; overflow-x: auto; }
+        .board { grid-template-columns: 1fr; padding-left: 18px; padding-right: 18px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <span>Lotus's Bug Reporting</span>
+      </div>
+      <div class="brand" style="font-size: 12px; opacity: 0.9;">Game QA</div>
+    </header>
+
+    <main class="page">
+      <div class="issue-header">
+        <div class="issue-meta">
+          <button id="issueIdLink" class="issue-link" type="button" data-tab="issues-tab">BUG-2457</button>
+          <select id="statusInput" class="issue-status-select">
+            <option selected>Open</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
+            <option>Closed</option>
+          </select>
+          <span id="issueStatusBadge" class="issue-status">Open</span>
+        </div>
+        <div class="header-actions">
+          <button class="btn" id="saveIssueButton" type="button">Create issue</button>
+          <button class="btn primary" type="button" data-tab="completed-tab">Completed Example</button>
+        </div>
+      </div>
+
+      <div class="tabbar">
+        <button class="tab active" type="button" data-tab="form-tab">Bug report form</button>
+        <button class="tab" type="button" data-tab="completed-tab">Completed example</button>
+        <button class="tab" type="button" data-tab="issues-tab">All bugs</button>
+        <button class="tab" type="button" data-tab="board-tab">Kanban board</button>
+      </div>
+
+      <section class="main tab-panel active" id="form-tab">
+        <div class="field-row">
+          <div class="field-label">Summary</div>
+          <div class="field-input">
+            <input id="summaryInput" class="summary-input" type="text" placeholder="Briefly describe the bug" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Description</div>
+          <div class="field-input">
+            <textarea id="descriptionInput" placeholder="Describe what is happening and where it occurs."></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Repro rate</div>
+          <div class="field-input">
+            <select id="reproRateInput">
+              <option>1/10 - 10%</option>
+              <option>2/10 - 20%</option>
+              <option>3/10 - 30%</option>
+              <option>4/10 - 40%</option>
+              <option>5/10 - 50%</option>
+              <option>6/10 - 60%</option>
+              <option>7/10 - 70%</option>
+              <option selected>8/10 - 80%</option>
+              <option>9/10 - 90%</option>
+              <option>10/10 - 100%</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Severity</div>
+          <div class="field-input">
+            <select id="severityInput">
+              <option>minor</option>
+              <option selected>major</option>
+              <option>critical</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Environment</div>
+          <div class="field-input">
+            <select id="environmentInput">
+              <option>main menu</option>
+              <option>character creator</option>
+              <option selected>gameplay</option>
+              <option>audio</option>
+              <option>map/visual</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Steps to reproduce</div>
+          <div class="field-input">
+            <textarea id="stepsInput" placeholder="1. Start from...
+2. Navigate to...
+3. Observe..."></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Actual behavior</div>
+          <div class="field-input">
+            <textarea id="actualInput" placeholder="What happened when you followed the steps?"></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Expected behavior</div>
+          <div class="field-input">
+            <textarea id="expectedInput" placeholder="What should have happened instead?"></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Build</div>
+          <div class="field-input">
+            <input id="buildInput" type="text" placeholder="Example: 1.7.4" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Labels</div>
+          <div class="field-input">
+            <input id="labelsInput" type="text" placeholder="Example: combat, UI, audio" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Media</div>
+          <div class="field-input">
+            <input id="mediaInput" type="file" accept="image/*,video/*" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Additional notes</div>
+          <div class="field-input">
+            <textarea id="notesInput" placeholder="Add workaround, frequency notes, or other context."></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Developer disposition</div>
+          <div class="field-input">
+            <select id="dispositionInput">
+              <option value="">Not assigned</option>
+              <option>Known shippable</option>
+              <option>Duplicate</option>
+              <option>Cannot reproduce (CNR)</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="main tab-panel" id="completed-tab" style="display:none;">
+        <div class="field-row">
+          <div class="field-label">Summary</div>
+          <div id="previewSummary" class="field-value">[Bug] Character model flickers during cutscene transitions</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Description</div>
+          <div id="previewDescription" class="field-value textarea">The character model briefly flickers, clips through the environment, and snaps back into position when entering a zone transition during gameplay. This issue is most noticeable when moving between open-world map sections and during scripted scene transitions.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Repro rate</div>
+          <div id="previewReproRate" class="field-value">8/10 - 80%</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Severity</div>
+          <div id="previewSeverity" class="field-value"><span class="tag major">major</span></div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Environment</div>
+          <div id="previewEnvironment" class="field-value">gameplay</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Steps to reproduce</div>
+          <div id="previewSteps" class="field-value textarea">1. Launch the game and load a saved campaign file.
+2. Travel to a map transition area or loading gate.
+3. Walk toward the trigger while the scene begins to change.
+4. Observe the player mesh flicker and briefly clip into the terrain.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Actual behavior</div>
+          <div id="previewActual" class="field-value textarea">The same character model temporarily disappears, flickers, and reappears offset or intersecting the ground during loading transitions. The bug interrupts the player experience and can make movement feel inconsistent.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Expected behavior</div>
+          <div id="previewExpected" class="field-value textarea">The character should transition cleanly into the next area without clipping, disappearing, or losing alignment with the environment. The animation and mesh should remain stable throughout the transition.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Build</div>
+          <div id="previewBuild" class="field-value">1.7.4</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Labels</div>
+          <div id="previewLabels" class="field-value">visual, animation, gameplay</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Media</div>
+          <div id="previewMedia" class="field-value">Screenshot / video attachment</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Additional notes</div>
+          <div id="previewNotes" class="field-value textarea">Occurs more frequently after changing outfits in the character creator. Temporary workaround: lower shadow quality. The issue still appears on mid-range hardware, though it is more visible on high-detail settings.</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Developer disposition</div>
+          <div id="previewDisposition" class="field-value">Not assigned</div>
+        </div>
+      </section>
+
+      <section class="tab-panel issue-list" id="issues-tab" style="display:none;">
+        <div class="view-heading">
+          <div>
+            <h2>All game bugs</h2>
+            <p>Browse the full training backlog and review each issue's scope.</p>
+          </div>
+          <button class="btn primary" type="button" data-tab="board-tab">View board</button>
+        </div>
+        <table class="issue-table">
+          <thead>
+            <tr><th>Key</th><th>Summary</th><th>Status</th><th>Severity</th><th>Environment</th></tr>
+          </thead>
+          <tbody id="issueTableBody"></tbody>
+        </table>
+      </section>
+
+      <section class="tab-panel" id="board-tab" style="display:none;">
+        <div class="issue-list">
+          <div class="view-heading">
+            <div>
+              <h2>Game QA Kanban</h2>
+              <p>Track each issue from discovery through resolution.</p>
+            </div>
+            <button class="btn" type="button" data-tab="issues-tab">All bugs</button>
+          </div>
+        </div>
+        <div class="board">
+          <div class="board-column" data-status="Open"><h3>Open</h3><div class="board-cards"></div></div>
+          <div class="board-column" data-status="In Progress"><h3>In Progress</h3><div class="board-cards"></div></div>
+          <div class="board-column" data-status="Review"><h3>Review</h3><div class="board-cards"></div></div>
+          <div class="board-column" data-status="Resolved"><h3>Resolved</h3><div class="board-cards"></div></div>
+          <div class="board-column" data-status="Closed"><h3>Closed</h3><div class="board-cards"></div></div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const tabs = document.querySelectorAll('.tab, [data-tab]');
+      const panels = document.querySelectorAll('.tab-panel');
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const target = tab.dataset.tab;
+
+          tabs.forEach((button) => button.classList.remove('active'));
+          document.querySelectorAll('.tab').forEach((button) => {
+            if (button.dataset.tab === target) button.classList.add('active');
+          });
+
+          panels.forEach((panel) => {
+            panel.style.display = panel.id === target ? 'block' : 'none';
+          });
+        });
+      });
+
+      function applyStatusStyles(status) {
+        const badge = document.getElementById('issueStatusBadge');
+        badge.textContent = status;
+        badge.classList.remove('status-in-progress', 'status-resolved', 'status-closed');
+
+        const value = status.toLowerCase().replace(/\s+/g, '-');
+        if (value === 'in-progress') badge.classList.add('status-in-progress');
+        if (value === 'resolved') badge.classList.add('status-resolved');
+        if (value === 'closed') badge.classList.add('status-closed');
+      }
+
+      function updatePreview() {
+        const issueId = document.getElementById('issueIdLink').textContent || 'BUG-2457';
+        const status = document.getElementById('statusInput').value || 'Open';
+        const summary = document.getElementById('summaryInput').value || 'Summary not entered';
+        const description = document.getElementById('descriptionInput').value || 'No description provided';
+        const reproRate = document.getElementById('reproRateInput').value || '1/10 - 10%';
+        const severity = document.getElementById('severityInput').value || 'major';
+        const environment = document.getElementById('environmentInput').value || 'gameplay';
+        const steps = document.getElementById('stepsInput').value || 'No steps entered';
+        const actual = document.getElementById('actualInput').value || 'No actual behavior entered';
+        const expected = document.getElementById('expectedInput').value || 'No expected behavior entered';
+        const build = document.getElementById('buildInput').value || 'N/A';
+        const labels = document.getElementById('labelsInput').value || 'none';
+        const notes = document.getElementById('notesInput').value || 'No additional notes';
+        const mediaFile = document.getElementById('mediaInput').files && document.getElementById('mediaInput').files[0]
+          ? document.getElementById('mediaInput').files[0].name
+          : 'Screenshot / video attachment';
+
+        document.getElementById('previewSummary').textContent = summary;
+        document.getElementById('previewDescription').textContent = description;
+        document.getElementById('previewReproRate').textContent = reproRate;
+        document.getElementById('previewEnvironment').textContent = environment;
+        document.getElementById('previewSteps').textContent = steps;
+        document.getElementById('previewActual').textContent = actual;
+        document.getElementById('previewExpected').textContent = expected;
+        document.getElementById('previewBuild').textContent = build;
+        document.getElementById('previewLabels').textContent = labels;
+        document.getElementById('previewNotes').textContent = notes;
+        document.getElementById('previewMedia').textContent = mediaFile;
+        document.getElementById('previewDisposition').textContent = document.getElementById('dispositionInput').value || 'Not assigned';
+        document.getElementById('previewSeverity').innerHTML = '<span class="tag ' + severity + '">' + severity + '</span>';
+
+        const previewIssueId = document.getElementById('previewIssueId');
+        if (previewIssueId) {
+          previewIssueId.textContent = issueId;
+        }
+
+        const previewStatus = document.getElementById('previewStatusBadge');
+        if (previewStatus) {
+          previewStatus.textContent = status;
+          previewStatus.className = 'issue-status';
+          const value = status.toLowerCase().replace(/\s+/g, '-');
+          if (value === 'in-progress') previewStatus.classList.add('status-in-progress');
+          if (value === 'resolved') previewStatus.classList.add('status-resolved');
+          if (value === 'closed') previewStatus.classList.add('status-closed');
+        }
+
+        applyStatusStyles(status);
+      }
+
+      ['statusInput', 'summaryInput', 'descriptionInput', 'reproRateInput', 'severityInput', 'environmentInput', 'stepsInput', 'actualInput', 'expectedInput', 'buildInput', 'labelsInput', 'notesInput', 'mediaInput', 'dispositionInput'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', updatePreview);
+        el.addEventListener('change', updatePreview);
+      });
+
+      document.getElementById('saveIssueButton').addEventListener('click', () => {
+        const summary = document.getElementById('summaryInput').value.trim();
+        if (!summary) {
+          document.getElementById('summaryInput').focus();
+          return;
+        }
+
+        const bugs = JSON.parse(localStorage.getItem('lotusBugReports') || '[]');
+        const nextNumber = bugs.reduce((highest, bug) => Math.max(highest, Number(bug.issueId.replace('BUG-', '')) || 0), 2457) + 1;
+        const payload = {
+          issueId: 'BUG-' + nextNumber,
+          status: document.getElementById('statusInput').value || 'Open',
+          summary,
+          severity: document.getElementById('severityInput').value || 'minor',
+          environment: document.getElementById('environmentInput').value || 'gameplay',
+          reproRate: document.getElementById('reproRateInput').value || '1/10 - 10%',
+          labels: document.getElementById('labelsInput').value || 'none',
+          disposition: document.getElementById('dispositionInput').value || 'Not assigned'
+        };
+        bugs.push(payload);
+        localStorage.setItem('lotusBugReports', JSON.stringify(bugs));
+        renderIssues();
+        document.getElementById('issueIdLink').textContent = payload.issueId;
+        updatePreview();
+        const saveBtn = document.getElementById('saveIssueButton');
+        const previousText = saveBtn.textContent;
+        saveBtn.textContent = 'Created';
+        setTimeout(() => { saveBtn.textContent = previousText; }, 1200);
+      });
+
+      function renderIssues() {
+        const bugs = JSON.parse(localStorage.getItem('lotusBugReports') || '[]');
+        const tableBody = document.getElementById('issueTableBody');
+        tableBody.innerHTML = bugs.length ? bugs.map((bug) => '<tr><td><a href="#form-tab" data-tab="form-tab">' + bug.issueId + '</a></td><td>' + bug.summary + '</td><td>' + bug.status + '</td><td><span class="tag ' + bug.severity + '">' + bug.severity + '</span></td><td>' + bug.environment + '</td></tr>').join('') : '<tr><td colspan="5" class="empty-state">No bugs created yet. Complete the form and choose Create issue.</td></tr>';
+
+        document.querySelectorAll('.board-cards').forEach((container) => { container.innerHTML = ''; });
+        document.querySelectorAll('.board-column').forEach((column) => {
+          const status = column.dataset.status;
+          const cards = bugs.filter((bug) => bug.status === status);
+          const container = column.querySelector('.board-cards');
+          container.innerHTML = cards.length ? cards.map((bug) => '<article class="board-card" draggable="true" data-issue-id="' + bug.issueId + '"><a href="#form-tab" data-tab="form-tab">' + bug.issueId + '</a><p>' + bug.summary + '</p><div class="board-card-meta"><span class="tag ' + bug.severity + '">' + bug.severity + '</span><span>' + bug.disposition + '</span></div></article>').join('') : '<div class="empty-state">No issues here yet.</div>';
+        });
+        wireIssueLinks();
+        wireBoardCards();
+      }
+
+      function wireIssueLinks() {
+        document.querySelectorAll('[data-tab="form-tab"]').forEach((link) => {
+          link.addEventListener('click', () => document.querySelector('.tab[data-tab="form-tab"]').click());
+        });
+      }
+
+      function wireBoardCards() {
+        document.querySelectorAll('.board-card[draggable="true"]').forEach((card) => {
+          card.addEventListener('dragstart', () => { card.classList.add('dragging'); });
+          card.addEventListener('dragend', () => { card.classList.remove('dragging'); });
+        });
+      }
+
+      document.querySelectorAll('.board-column').forEach((column) => {
+        column.addEventListener('dragover', (event) => {
+          event.preventDefault();
+          column.classList.add('drag-over');
+        });
+        column.addEventListener('dragleave', () => column.classList.remove('drag-over'));
+        column.addEventListener('drop', (event) => {
+          event.preventDefault();
+          column.classList.remove('drag-over');
+          const card = document.querySelector('.board-card.dragging');
+          if (!card) return;
+          const bugs = JSON.parse(localStorage.getItem('lotusBugReports') || '[]');
+          const bug = bugs.find((item) => item.issueId === card.dataset.issueId);
+          if (bug) bug.status = column.dataset.status;
+          localStorage.setItem('lotusBugReports', JSON.stringify(bugs));
+          renderIssues();
+        });
+      });
+
+      renderIssues();
+      updatePreview();
+    </script>
+  </body>
+</html>

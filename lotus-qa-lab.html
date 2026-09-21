@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lotus QA Lab</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-alt: #f8f9fc;
+      --line: #dfe6f0;
+      --line-strong: #c5cfdb;
+      --text: #1c2431;
+      --muted: #677689;
+      --blue: #225ae8;
+      --blue-soft: #edf3ff;
+      --green: #2a8f6d;
+      --green-soft: #e7f8f1;
+      --amber: #d98200;
+      --amber-soft: #fff4de;
+      --red: #b33232;
+      --red-soft: #ffe7e7;
+      --purple: #5f4bcf;
+      --purple-soft: #f0ebff;
+      --shadow: rgba(18, 29, 49, 0.07);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+    }
+
+    .topbar {
+      background: #1a2332;
+      color: #edf4ff;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      letter-spacing: 0.03em;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.14);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, #78a9ff, #2d5ef7);
+      color: white;
+      font-size: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .page {
+      max-width: 1260px;
+      margin: 22px auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px var(--shadow);
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 22px 14px;
+      background: var(--panel-alt);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .issue-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .issue-link {
+      background: transparent;
+      border: none;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 6px;
+    }
+
+    .issue-link:hover {
+      background: var(--blue-soft);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: white;
+      color: var(--text);
+    }
+
+    .status-open { background: var(--blue-soft); color: var(--blue); border-color: #d3dbff; }
+    .status-progress { background: var(--amber-soft); color: var(--amber); border-color: #f5d89e; }
+    .status-review { background: var(--purple-soft); color: var(--purple); border-color: #d9d0ff; }
+    .status-resolved { background: var(--green-soft); color: var(--green); border-color: #bee3d6; }
+    .status-closed { background: var(--red-soft); color: var(--red); border-color: #efc0c0; }
+    .status-backlog { background: #eef3ff; color: #3755b5; border-color: #dbe6ff; }
+    .status-blocked { background: #fff0f0; color: #a53a3a; border-color: #f5d4d4; }
+    .status-done { background: #eaf9f1; color: #207e5d; border-color: #cfeee0; }
+
+    .status-select {
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: white;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .button {
+      border: 1px solid var(--line-strong);
+      background: white;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      padding: 14px 22px 0;
+      background: var(--panel-alt);
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      border: 1px solid var(--line-strong);
+      border-bottom: none;
+      background: #fff;
+      color: var(--muted);
+      border-radius: 8px 8px 0 0;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--blue-soft);
+      color: var(--blue);
+      border-color: #d7e5ff;
+    }
+
+    .panel {
+      display: none;
+      padding: 0;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .form-wrap {
+      padding: 10px 0 0;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 16px;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .field-row:last-child {
+      border-bottom: none;
+    }
+
+    .field-label {
+      padding-top: 12px;
+      font-weight: 700;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .field-input {
+      width: 100%;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+    }
+
+    input[type="text"], input[type="file"], select, textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: white;
+      color: var(--text);
+      padding: 10px 12px;
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .summary-input {
+      font-size: 18px;
+      font-weight: 700;
+      padding: 12px 14px;
+    }
+
+    .row-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: lowercase;
+      border: 1px solid transparent;
+    }
+
+    .minor { background: #edf3ff; color: #3b5cc0; border-color: #d3dfff; }
+    .major { background: #fff5d9; color: #a76500; border-color: #f3d999; }
+    .critical { background: #ffe8e8; color: #a33434; border-color: #f3c5c5; }
+
+    .disposition {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .disposition.shippable { background: #e3f6ed; color: #1d7758; }
+    .disposition.duplicate { background: #f5eaf7; color: #76438e; }
+    .disposition.cnr { background: #fff0df; color: #a15e00; }
+
+    .table-wrap {
+      padding: 18px 22px 26px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--panel-alt);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .entry-link {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .issue-board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(180px, 1fr));
+      gap: 16px;
+      padding: 20px 22px 26px;
+    }
+
+    .task-board {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap: 16px;
+      padding: 20px 22px 26px;
+    }
+
+    .board-col {
+      background: var(--panel-alt);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      min-height: 240px;
+      padding: 12px;
+    }
+
+    .board-col h3 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .board-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 12px 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(19, 26, 38, 0.04);
+      cursor: grab;
+    }
+
+    .board-card:active {
+      cursor: grabbing;
+    }
+
+    .card-title {
+      display: block;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 8px;
+      text-decoration: none;
+    }
+
+    .card-summary {
+      font-size: 14px;
+      line-height: 1.4;
+      margin: 0 0 10px;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .card-meta .tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .drop-zone {
+      min-height: 120px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 8px;
+      padding: 8px;
+      background: rgba(255,255,255,0.2);
+    }
+
+    .drop-zone.dragover {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .empty-state {
+      color: var(--muted);
+      font-size: 14px;
+      padding: 12px 8px;
+      text-align: center;
+      border: 1px dashed var(--line-strong);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.55);
+    }
+
+    .form-actions {
+      padding: 18px 24px 26px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid var(--line);
+      background: var(--panel-alt);
+    }
+
+    @media (max-width: 900px) {
+      .field-row { grid-template-columns: 1fr; }
+      .row-grid { grid-template-columns: 1fr; }
+      .issue-board, .task-board { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .issue-board, .task-board { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .header-actions { width: 100%; justify-content: flex-start; }
+    }
+  </style>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">L</div>
+      <span>Lotus QA Lab</span>
+    </div>
+    <div class="brand" style="font-size: 12px; opacity: 0.9;">Game QA</div>
+  </header>
+
+  <main class="page">
+    <div class="toolbar">
+      <div class="issue-meta">
+        <button id="issueLink" class="issue-link" type="button" data-tab="bugs-tab">LOT-1001</button>
+        <select id="statusSelect" class="status-select">
+          <option>Open</option>
+          <option>In Progress</option>
+          <option>Review</option>
+          <option>Resolved</option>
+          <option>Closed</option>
+        </select>
+        <span id="statusBadge" class="status-pill status-open">Open</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="button" id="saveBugBtn" type="button">Save issue</button>
+        <button class="button" id="downloadBugBtn" type="button">Download report</button>
+        <button class="button" id="loadDemoBtn" type="button">Load game demos</button>
+        <button class="button" id="downloadDataBtn" type="button">Download QA data</button>
+        <button class="button" id="downloadPortfolioBtn" type="button">Download portfolio</button>
+        <button class="button" id="openPortfolioBtn" type="button">Open portfolio</button>
+        <button class="button primary" id="newIssueBtn" type="button">Create new</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" type="button" data-tab="form-panel">Bug report</button>
+      <button class="tab" type="button" data-tab="completed-panel">Completed view</button>
+      <button class="tab" type="button" data-tab="bugs-tab">Bug list</button>
+      <button class="tab" type="button" data-tab="tasks-tab">QA tasks</button>
+      <button class="tab" type="button" data-tab="cases-tab">Test cases</button>
+      <button class="tab" type="button" data-tab="board-tab">Kanban</button>
+    </div>
+
+    <section id="form-panel" class="panel active">
+      <div class="form-wrap">
+        <div class="field-row">
+          <div class="field-label">Summary</div>
+          <div class="field-input">
+            <input id="summaryInput" class="summary-input" type="text" placeholder="Enter bug summary" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Description</div>
+          <div class="field-input">
+            <textarea id="descriptionInput" placeholder="Describe the issue..."></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Repro rate</div>
+          <div class="field-input">
+            <select id="reproRateInput">
+              <option>1/10 - 10%</option>
+              <option>2/10 - 20%</option>
+              <option>3/10 - 30%</option>
+              <option>4/10 - 40%</option>
+              <option>5/10 - 50%</option>
+              <option>6/10 - 60%</option>
+              <option>7/10 - 70%</option>
+              <option selected>8/10 - 80%</option>
+              <option>9/10 - 90%</option>
+              <option>10/10 - 100%</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Severity</div>
+          <div class="field-input">
+            <select id="severityInput">
+              <option>minor</option>
+              <option selected>major</option>
+              <option>critical</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Environment</div>
+          <div class="field-input">
+            <select id="environmentInput">
+              <option>main menu</option>
+              <option>character creator</option>
+              <option selected>gameplay</option>
+              <option>audio</option>
+              <option>map/visual</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Steps to reproduce</div>
+          <div class="field-input">
+            <textarea id="stepsInput" placeholder="1. Launch the game..."></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Observed results</div>
+          <div class="field-input">
+            <textarea id="actualInput" placeholder="What is happening right now?"></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Expected results</div>
+          <div class="field-input">
+            <textarea id="expectedInput" placeholder="What should happen instead?"></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Build</div>
+          <div class="field-input">
+            <input id="buildInput" type="text" value="0.8.4" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Labels</div>
+          <div class="field-input">
+            <input id="labelsInput" type="text" value="combat, visual, gameplay" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Media</div>
+          <div class="field-input">
+            <input id="mediaInput" type="file" accept="image/*,video/*" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Developer disposition</div>
+          <div class="field-input">
+            <select id="dispositionInput">
+              <option value="none">Unassigned</option>
+              <option value="shippable">Known shippable</option>
+              <option value="duplicate">Duplicate</option>
+              <option value="cnr">Cannot reproduce (CNR)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">Additional notes</div>
+          <div class="field-input">
+            <textarea id="notesInput" placeholder="Any extra QA notes or workarounds..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="button" type="button" data-tab="bugs-tab">See bug list</button>
+          <button class="button primary" type="button" id="createIssueBtn">Create issue</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="completed-panel" class="panel">
+      <div class="field-row">
+        <div class="field-label">Summary</div>
+        <div id="previewSummary" class="field-input">No summary entered</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Description</div>
+        <div id="previewDescription" class="field-input">No description entered</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Repro rate</div>
+        <div id="previewRepro" class="field-input">1/10 - 10%</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Severity</div>
+        <div id="previewSeverity" class="field-input"><span class="tag major">major</span></div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Environment</div>
+        <div id="previewEnvironment" class="field-input">gameplay</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Steps to reproduce</div>
+        <div id="previewSteps" class="field-input">No steps entered</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Observed results</div>
+        <div id="previewActual" class="field-input">No observed results entered</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Expected results</div>
+        <div id="previewExpected" class="field-input">No expected results entered</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Build</div>
+        <div id="previewBuild" class="field-input">0.8.4</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Labels</div>
+        <div id="previewLabels" class="field-input">combat, visual, gameplay</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Developer disposition</div>
+        <div id="previewDisposition" class="field-input">Unassigned</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Media</div>
+        <div id="previewMedia" class="field-input">No attachment</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Additional notes</div>
+        <div id="previewNotes" class="field-input">No notes entered</div>
+      </div>
+    </section>
+
+    <section id="bugs-tab" class="panel">
+      <div class="table-wrap">
+        <h2 style="margin:0 0 6px;">All bugs</h2>
+        <p style="margin:0 0 16px;color:var(--muted);">Create as many QA issues as needed for practice.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Summary</th>
+              <th>Status</th>
+              <th>Severity</th>
+              <th>Environment</th>
+              <th>Disposition</th>
+            </tr>
+          </thead>
+          <tbody id="bugTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tasks-tab" class="panel">
+      <div class="table-wrap">
+        <h2 style="margin:0 0 6px;">Game QA tasks</h2>
+        <p style="margin:0 0 16px;color:var(--muted);">Testing and analysis work items separate from bugs.</p>
+
+        <div class="row-grid" style="margin-bottom: 18px;">
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:8px;">Task title</label>
+            <input id="taskTitleInput" type="text" placeholder="Example: Fix localization text overflow" />
+          </div>
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:8px;">Owner</label>
+            <input id="taskOwnerInput" type="text" value="QA Tester" />
+          </div>
+        </div>
+
+        <div class="row-grid" style="margin-bottom:18px;">
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:8px;">Task status</label>
+            <select id="taskStatusInput">
+              <option>Backlog</option>
+              <option>In Progress</option>
+              <option>Blocked</option>
+              <option>Done</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:8px;">Task notes</label>
+            <input id="taskNotesInput" type="text" placeholder="Optional details or acceptance criteria" />
+          </div>
+        </div>
+
+        <div class="form-actions" style="border-top:none; padding:0 0 18px;">
+          <button class="button primary" id="addTaskBtn" type="button">Add task</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Owner</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="taskTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="cases-tab" class="panel">
+      <div class="table-wrap">
+        <h2 style="margin:0 0 6px;">Test cases</h2>
+        <p style="margin:0 0 18px;color:var(--muted);">Write reusable QA validation steps for features and releases.</p>
+
+        <div class="row-grid">
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:8px;">Test case name</label>
+            <input id="caseNameInput" type="text" placeholder="Example: Character creator saves gender selection" />
+          </div>
+          <div>
+            <label style="display:block;font-weight:700;margin-bottom:8px;">Result</label>
+            <select id="caseResultInput">
+              <option value="Pass">Pass</option>
+              <option value="Fail">Fail</option>
+              <option value="Blocked">Blocked</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <label style="display:block;font-weight:700;margin-bottom:8px;">Steps</label>
+          <textarea id="caseStepsInput" placeholder="1. Open character creator..."></textarea>
+        </div>
+
+        <div class="form-actions" style="border-top:none; padding:18px 0 12px;">
+          <button class="button primary" id="addCaseBtn" type="button">Add test case</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Result</th>
+              <th>Steps</th>
+            </tr>
+          </thead>
+          <tbody id="caseTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="board-tab" class="panel">
+      <div class="issue-board" id="bugKanbanBoard">
+        <div class="board-col" data-status="Open">
+          <h3>Open</h3>
+          <div class="drop-zone" id="column-Open"></div>
+        </div>
+
+        <div class="board-col" data-status="In Progress">
+          <h3>In Progress</h3>
+          <div class="drop-zone" id="column-In Progress"></div>
+        </div>
+
+        <div class="board-col" data-status="Review">
+          <h3>Review</h3>
+          <div class="drop-zone" id="column-Review"></div>
+        </div>
+
+        <div class="board-col" data-status="Resolved">
+          <h3>Resolved</h3>
+          <div class="drop-zone" id="column-Resolved"></div>
+        </div>
+
+        <div class="board-col" data-status="Closed">
+          <h3>Closed</h3>
+          <div class="drop-zone" id="column-Closed"></div>
+        </div>
+      </div>
+
+      <div class="task-board" id="taskKanbanBoard" style="padding-top:0;">
+        <div class="board-col" data-status="Backlog">
+          <h3>Backlog</h3>
+          <div class="drop-zone" id="task-column-Backlog"></div>
+        </div>
+
+        <div class="board-col" data-status="In Progress">
+          <h3>In Progress</h3>
+          <div class="drop-zone" id="task-column-In Progress"></div>
+        </div>
+
+        <div class="board-col" data-status="Blocked">
+          <h3>Blocked</h3>
+          <div class="drop-zone" id="task-column-Blocked"></div>
+        </div>
+
+        <div class="board-col" data-status="Done">
+          <h3>Done</h3>
+          <div class="drop-zone" id="task-column-Done"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEYS = {
+      bugs: "lotus-qa-bugs",
+      tasks: "lotus-qa-tasks",
+      cases: "lotus-qa-cases"
+    };
+
+    const defaultBug = {
+      issueKey: "LOT-1001",
+      summary: "Character model flickers during gameplay transitions",
+      description: "The mesh briefly clips and snaps back during zone transitions.",
+      reproRate: "8/10 - 80%",
+      severity: "major",
+      environment: "gameplay",
+      steps: "1. Launch the game\n2. Enter a transition zone\n3. Watch the model flicker",
+      actual: "The player model flickers and clips into terrain.",
+      expected: "The character should remain stable and aligned.",
+      build: "0.8.4",
+      labels: "visual, gameplay",
+      media: "No attachment",
+      notes: "Noticed more often with high shadows enabled.",
+      status: "Open",
+      disposition: "none"
+    };
+
+    const defaultTasks = [
+      { id: "task-1", title: "Tune combat hit feedback", owner: "Gameplay Team", status: "Backlog", notes: "Need stronger impact response" },
+      { id: "task-2", title: "Review quest marker spacing", owner: "UI Team", status: "In Progress", notes: "Check for overlap at level transitions" }
+    ];
+
+    const defaultCases = [
+      {
+        id: "case-1",
+        name: "Character creator saves gender selection",
+        result: "Pass",
+        steps: "1. Open character creator\n2. Select a gender\n3. Save and reopen the menu"
+      }
+    ];
+
+    const gameDemoData = {
+      bugs: [
+        {
+          issueKey: "ER-101",
+          game: "Elden Ring",
+          summary: "Spirit Ash summon fails near the Consecrated Snowfield catacomb entrance",
+          description: "The summon pool is visible, but the Spirit Calling Bell produces no summon prompt in a valid co-op restricted area.",
+          reproRate: "8/10 - 80%",
+          severity: "major",
+          environment: "gameplay",
+          steps: "1. Travel to the Consecrated Snowfield catacomb entrance\n2. Equip the Spirit Calling Bell\n3. Enter the boss approach\n4. Attempt to summon a Spirit Ash",
+          actual: "The summon prompt does not appear until the player reloads the area.",
+          expected: "The Spirit Ash summon prompt should appear when the player enters the valid encounter area.",
+          build: "1.10.2",
+          labels: "elden-ring, gameplay, summons",
+          media: "No attachment",
+          notes: "Reproduced after fast travel and after loading from a grace.",
+          status: "Open",
+          disposition: "none"
+        },
+        {
+          issueKey: "ER-102",
+          game: "Elden Ring",
+          summary: "Torrent remains unavailable after leaving a cave elevator transition",
+          description: "The mount whistle is disabled after a vertical loading transition even though the player is outdoors and has enough FP.",
+          reproRate: "6/10 - 60%",
+          severity: "minor",
+          environment: "map/visual",
+          steps: "1. Enter a cave with an elevator\n2. Ride the elevator to the outdoor exit\n3. Attempt to summon Torrent",
+          actual: "The mount action stays disabled until the player opens and closes the map.",
+          expected: "Torrent should be available immediately in the outdoor area.",
+          build: "1.10.2",
+          labels: "elden-ring, mount, transition",
+          media: "No attachment",
+          notes: "Only observed when the elevator finishes during a quick camera pan.",
+          status: "In Progress",
+          disposition: "none"
+        },
+        {
+          issueKey: "ER-103",
+          game: "Elden Ring",
+          summary: "Boss health bar briefly disappears after a phase transition",
+          description: "The phase transition completes, but the HUD health bar is hidden for several seconds while damage continues to register.",
+          reproRate: "4/10 - 40%",
+          severity: "major",
+          environment: "gameplay",
+          steps: "1. Start the selected remembrance boss fight\n2. Trigger the second phase\n3. Continue attacking during the transition",
+          actual: "The health bar disappears and returns after the boss has already taken damage.",
+          expected: "The boss health bar should remain visible throughout the phase transition.",
+          build: "1.10.2",
+          labels: "elden-ring, hud, boss",
+          media: "No attachment",
+          notes: "Reviewing capture timing and HUD animation state.",
+          status: "Review",
+          disposition: "none"
+        },
+        {
+          issueKey: "NBA-201",
+          game: "NBA 2K27",
+          summary: "MyCAREER badge progress does not update after a completed NBA game",
+          description: "Post-game badge progress remains unchanged even when the tracked action is performed multiple times.",
+          reproRate: "9/10 - 90%",
+          severity: "critical",
+          environment: "gameplay",
+          steps: "1. Load a MyCAREER save\n2. Equip a finishing badge\n3. Perform the badge action repeatedly\n4. Finish the game and view progression",
+          actual: "The badge progress value remains at its pre-game amount.",
+          expected: "Completed-game actions should update badge progress on the post-game progression screen.",
+          build: "2K27.1.0",
+          labels: "nba-2k27, mycareer, progression",
+          media: "No attachment",
+          notes: "Occurs on both home and away games with online connection confirmed.",
+          status: "Open",
+          disposition: "none"
+        },
+        {
+          issueKey: "NBA-202",
+          game: "NBA 2K27",
+          summary: "Shot meter setting resets after returning from the practice facility",
+          description: "The selected shot meter style is not retained after leaving practice and loading back into the City.",
+          reproRate: "7/10 - 70%",
+          severity: "major",
+          environment: "main menu",
+          steps: "1. Set a custom shot meter\n2. Enter the practice facility\n3. Return to the City\n4. Open controller settings",
+          actual: "The shot meter has reverted to the default style.",
+          expected: "The selected shot meter style should persist across mode transitions.",
+          build: "2K27.1.0",
+          labels: "nba-2k27, settings, persistence",
+          media: "No attachment",
+          notes: "Configuration persists after a full restart, but not during the transition.",
+          status: "In Progress",
+          disposition: "none"
+        },
+        {
+          issueKey: "NBA-203",
+          game: "NBA 2K27",
+          summary: "Crowd audio loops after a timeout during online play",
+          description: "A short crowd reaction repeats continuously after the timeout overlay closes.",
+          reproRate: "5/10 - 50%",
+          severity: "minor",
+          environment: "audio",
+          steps: "1. Start an online match\n2. Call a timeout during a scoring run\n3. Resume play\n4. Listen for the crowd reaction",
+          actual: "The same crowd audio clip loops until the next whistle.",
+          expected: "Crowd audio should return to the normal arena mix after the timeout.",
+          build: "2K27.1.0",
+          labels: "nba-2k27, audio, online",
+          media: "No attachment",
+          notes: "Not reproduced with commentary volume muted.",
+          status: "Resolved",
+          disposition: "shippable"
+        },
+        {
+          issueKey: "SH-301",
+          game: "Silent Hill f",
+          summary: "Flashlight beam clips through the hospital examination room wall",
+          description: "The flashlight volume illuminates props and geometry behind a solid wall near the examination room.",
+          reproRate: "8/10 - 80%",
+          severity: "major",
+          environment: "map/visual",
+          steps: "1. Enter the hospital examination wing\n2. Stand beside the examination room door\n3. Aim the flashlight across the wall seam",
+          actual: "The beam leaks through the wall and reveals objects in the next room.",
+          expected: "The flashlight beam should be occluded by the wall.",
+          build: "1.04",
+          labels: "silent-hill-f, lighting, collision",
+          media: "No attachment",
+          notes: "Most visible in the fog preset with high contrast enabled.",
+          status: "Open",
+          disposition: "none"
+        },
+        {
+          issueKey: "SH-302",
+          game: "Silent Hill f",
+          summary: "Radio static continues after the nearby enemy leaves the search area",
+          description: "The radio warning state remains active after the enemy has moved beyond the encounter radius.",
+          reproRate: "6/10 - 60%",
+          severity: "major",
+          environment: "audio",
+          steps: "1. Enter the apartment hallway\n2. Trigger the radio warning\n3. Break line of sight and move two rooms away\n4. Wait for the enemy to leave",
+          actual: "Static continues until the player reloads the checkpoint.",
+          expected: "Radio static should stop when no hostile is inside the detection radius.",
+          build: "1.04",
+          labels: "silent-hill-f, audio, enemy-ai",
+          media: "No attachment",
+          notes: "Likely an encounter state cleanup issue after a door transition.",
+          status: "In Progress",
+          disposition: "none"
+        },
+        {
+          issueKey: "SH-303",
+          game: "Silent Hill f",
+          summary: "Puzzle note text overlaps the inventory panel at 16:10 aspect ratio",
+          description: "The translated puzzle note extends underneath the inventory panel on a narrow display configuration.",
+          reproRate: "10/10 - 100%",
+          severity: "minor",
+          environment: "main menu",
+          steps: "1. Set display aspect ratio to 16:10\n2. Collect the translated puzzle note\n3. Open the inventory and inspect the note",
+          actual: "The final lines are partially hidden below the inventory panel.",
+          expected: "All puzzle note text should remain readable at supported aspect ratios.",
+          build: "1.04",
+          labels: "silent-hill-f, ui, localization",
+          media: "No attachment",
+          notes: "Add to localization layout regression coverage.",
+          status: "Review",
+          disposition: "none"
+        }
+      ],
+      tasks: [
+        { id: "task-er-1", game: "Elden Ring", title: "Capture summon-state logs around catacomb transitions", owner: "QA Tester", status: "In Progress", notes: "Compare fast travel and grace reload paths" },
+        { id: "task-er-2", game: "Elden Ring", title: "Add phase-transition HUD regression coverage", owner: "QA Analyst", status: "Backlog", notes: "Include remembrance bosses with two phases" },
+        { id: "task-nba-1", game: "NBA 2K27", title: "Verify MyCAREER badge progression across online and offline saves", owner: "QA Analyst", status: "In Progress", notes: "Record before and after progression values" },
+        { id: "task-nba-2", game: "NBA 2K27", title: "Build controller settings persistence matrix", owner: "QA Tester", status: "Backlog", notes: "Practice, City, MyTEAM, and restart coverage" },
+        { id: "task-sh-1", game: "Silent Hill f", title: "Run flashlight occlusion sweep across hospital rooms", owner: "QA Tester", status: "Blocked", notes: "Waiting for lighting test build" },
+        { id: "task-sh-2", game: "Silent Hill f", title: "Add 16:10 localization layout pass", owner: "QA Analyst", status: "Done", notes: "Validated puzzle notes and inventory panels" }
+      ],
+      cases: [
+        { id: "case-er-1", game: "Elden Ring", name: "Spirit Ash prompt appears in a valid encounter area", result: "Fail", steps: "1. Equip Spirit Calling Bell\n2. Enter a valid boss approach\n3. Confirm summon prompt appears\n4. Repeat after fast travel" },
+        { id: "case-er-2", game: "Elden Ring", name: "Boss HUD remains visible during phase transition", result: "Pass", steps: "1. Start a two-phase remembrance fight\n2. Trigger phase transition\n3. Confirm health bar remains visible\n4. Confirm damage updates correctly" },
+        { id: "case-nba-1", game: "NBA 2K27", name: "MyCAREER badge progress updates after a completed game", result: "Fail", steps: "1. Record badge progress\n2. Perform the tracked action\n3. Complete the game\n4. Compare post-game progress" },
+        { id: "case-nba-2", game: "NBA 2K27", name: "Shot meter preference persists between modes", result: "Fail", steps: "1. Select a custom shot meter\n2. Enter practice\n3. Return to the City\n4. Verify controller settings" },
+        { id: "case-sh-1", game: "Silent Hill f", name: "Flashlight beam respects wall occlusion", result: "Fail", steps: "1. Enter hospital examination wing\n2. Aim flashlight at wall seam\n3. Inspect adjacent room for light leakage" },
+        { id: "case-sh-2", game: "Silent Hill f", name: "Puzzle note remains readable at 16:10", result: "Pass", steps: "1. Set a 16:10 display\n2. Collect a translated puzzle note\n3. Open inventory\n4. Read every line of the note" }
+      ]
+    };
+
+    function getBugList() {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.bugs) || "[]");
+      return saved.length ? saved : [defaultBug];
+    }
+
+    function saveBugList(list) {
+      localStorage.setItem(STORAGE_KEYS.bugs, JSON.stringify(list));
+    }
+
+    function getTaskList() {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.tasks) || "[]");
+      return saved.length ? saved : defaultTasks;
+    }
+
+    function saveTaskList(list) {
+      localStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(list));
+    }
+
+    function getCaseList() {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.cases) || "[]");
+      return saved.length ? saved : defaultCases;
+    }
+
+    function saveCaseList(list) {
+      localStorage.setItem(STORAGE_KEYS.cases, JSON.stringify(list));
+    }
+
+    function normalizeStatus(value) {
+      const statuses = ["Open", "In Progress", "Review", "Resolved", "Closed"];
+      return statuses.includes(value) ? value : "Open";
+    }
+
+    function normalizeTaskStatus(value) {
+      const statuses = ["Backlog", "In Progress", "Blocked", "Done"];
+      return statuses.includes(value) ? value : "Backlog";
+    }
+
+    function normalizeDisposition(value) {
+      if (!value) return "Unassigned";
+      if (value === "shippable") return "Known shippable";
+      if (value === "duplicate") return "Duplicate";
+      if (value === "cnr") return "Cannot reproduce (CNR)";
+      return "Unassigned";
+    }
+
+    function statusClass(status) {
+      const s = (status || "Open").toLowerCase().replace(/\s+/g, "-");
+      if (s === "in-progress") return "status-progress";
+      if (s === "review") return "status-review";
+      if (s === "resolved") return "status-resolved";
+      if (s === "closed") return "status-closed";
+      if (s === "backlog") return "status-backlog";
+      if (s === "blocked") return "status-blocked";
+      if (s === "done") return "status-done";
+      return "status-open";
+    }
+
+    function applyStatusBadge(status) {
+      const badge = document.getElementById("statusBadge");
+      const normalized = normalizeStatus(status);
+      badge.textContent = normalized;
+      badge.className = "status-pill " + statusClass(normalized);
+    }
+
+    function nextIssueKey() {
+      const bugs = getBugList();
+      const max = bugs.reduce((highest, bug) => {
+        const match = /(\d+)$/.exec(bug.issueKey || "");
+        const number = match ? parseInt(match[1], 10) : 1000;
+        return Math.max(highest, number);
+      }, 1000);
+      return "LOT-" + (max + 1);
+    }
+
+    function updatePreview() {
+      const summary = document.getElementById("summaryInput").value || "No summary entered";
+      const description = document.getElementById("descriptionInput").value || "No description entered";
+      const repro = document.getElementById("reproRateInput").value || "1/10 - 10%";
+      const severity = document.getElementById("severityInput").value || "major";
+      const environment = document.getElementById("environmentInput").value || "gameplay";
+      const steps = document.getElementById("stepsInput").value || "No steps entered";
+      const actual = document.getElementById("actualInput").value || "No observed results entered";
+      const expected = document.getElementById("expectedInput").value || "No expected results entered";
+      const build = document.getElementById("buildInput").value || "0.8.4";
+      const labels = document.getElementById("labelsInput").value || "none";
+      const notes = document.getElementById("notesInput").value || "No notes entered";
+      const mediaInput = document.getElementById("mediaInput");
+      const media = mediaInput.files && mediaInput.files[0] ? mediaInput.files[0].name : "No attachment";
+      const disposition = document.getElementById("dispositionInput").value || "none";
+
+      document.getElementById("previewSummary").textContent = summary;
+      document.getElementById("previewDescription").textContent = description;
+      document.getElementById("previewRepro").textContent = repro;
+      document.getElementById("previewEnvironment").textContent = environment;
+      document.getElementById("previewSteps").textContent = steps;
+      document.getElementById("previewActual").textContent = actual;
+      document.getElementById("previewExpected").textContent = expected;
+      document.getElementById("previewBuild").textContent = build;
+      document.getElementById("previewLabels").textContent = labels;
+      document.getElementById("previewNotes").textContent = notes;
+      document.getElementById("previewMedia").textContent = media;
+      document.getElementById("previewDisposition").textContent = normalizeDisposition(disposition);
+      document.getElementById("previewDisposition").className = "field-input";
+      if (disposition === "shippable") {
+        document.getElementById("previewDisposition").innerHTML = '<span class="disposition shippable">Known shippable</span>';
+      } else if (disposition === "duplicate") {
+        document.getElementById("previewDisposition").innerHTML = '<span class="disposition duplicate">Duplicate</span>';
+      } else if (disposition === "cnr") {
+        document.getElementById("previewDisposition").innerHTML = '<span class="disposition cnr">Cannot reproduce (CNR)</span>';
+      }
+
+      document.getElementById("previewSeverity").innerHTML = '<span class="tag ' + severity + '">' + severity + '</span>';
+    }
+
+    function populateFormFromBug(bug) {
+      document.getElementById("issueLink").textContent = bug.issueKey;
+      document.getElementById("statusSelect").value = bug.status || "Open";
+      applyStatusBadge(bug.status || "Open");
+      document.getElementById("summaryInput").value = bug.summary || "";
+      document.getElementById("descriptionInput").value = bug.description || "";
+      document.getElementById("reproRateInput").value = bug.reproRate || "8/10 - 80%";
+      document.getElementById("severityInput").value = bug.severity || "major";
+      document.getElementById("environmentInput").value = bug.environment || "gameplay";
+      document.getElementById("stepsInput").value = bug.steps || "";
+      document.getElementById("actualInput").value = bug.actual || "";
+      document.getElementById("expectedInput").value = bug.expected || "";
+      document.getElementById("buildInput").value = bug.build || "0.8.4";
+      document.getElementById("labelsInput").value = bug.labels || "";
+      document.getElementById("notesInput").value = bug.notes || "";
+      document.getElementById("dispositionInput").value = bug.disposition || "none";
+      updatePreview();
+    }
+
+    function renderBugTable() {
+      const tbody = document.getElementById("bugTableBody");
+      const bugs = getBugList();
+      tbody.innerHTML = bugs.map((bug) => {
+        const status = normalizeStatus(bug.status);
+        const severityBadge = '<span class="tag ' + (bug.severity || 'major') + '">' + (bug.severity || 'major') + '</span>';
+        const dispositionText = normalizeDisposition(bug.disposition);
+        const dispositionClass = bug.disposition === "shippable" ? "shippable" :
+          bug.disposition === "duplicate" ? "duplicate" :
+          bug.disposition === "cnr" ? "cnr" : "";
+        const dispositionHtml = dispositionClass
+          ? '<span class="disposition ' + dispositionClass + '">' + dispositionText + '</span>'
+          : '<span>' + dispositionText + '</span>';
+
+        return `
+          <tr>
+            <td><button class="entry-link" type="button" data-key="${bug.issueKey}">${bug.issueKey}</button></td>
+            <td>${bug.summary || "Untitled bug"}</td>
+            <td><span class="status-pill ${statusClass(status)}">${status}</span></td>
+            <td>${severityBadge}</td>
+            <td>${bug.environment || "gameplay"}</td>
+            <td>${dispositionHtml}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderTaskTable() {
+      const tasks = getTaskList();
+      const body = document.getElementById("taskTableBody");
+      body.innerHTML = tasks.map(task => `
+        <tr>
+          <td>${task.title}</td>
+          <td>${task.owner}</td>
+          <td><span class="status-pill ${statusClass(normalizeTaskStatus(task.status))}">${normalizeTaskStatus(task.status)}</span></td>
+          <td>${task.notes || "-"}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderCaseTable() {
+      const cases = getCaseList();
+      const body = document.getElementById("caseTableBody");
+      body.innerHTML = cases.map(testCase => `
+        <tr>
+          <td>${testCase.name}</td>
+          <td>${testCase.result}</td>
+          <td>${(testCase.steps || "").replace(/\n/g, "<br>")}</td>
+        </tr>
+      `).join("");
+    }
+
+    function createBugObject() {
+      return {
+        issueKey: document.getElementById("issueLink").textContent || nextIssueKey(),
+        summary: document.getElementById("summaryInput").value || "New bug report",
+        description: document.getElementById("descriptionInput").value || "",
+        reproRate: document.getElementById("reproRateInput").value || "8/10 - 80%",
+        severity: document.getElementById("severityInput").value || "major",
+        environment: document.getElementById("environmentInput").value || "gameplay",
+        steps: document.getElementById("stepsInput").value || "",
+        actual: document.getElementById("actualInput").value || "",
+        expected: document.getElementById("expectedInput").value || "",
+        build: document.getElementById("buildInput").value || "0.8.4",
+        labels: document.getElementById("labelsInput").value || "",
+        media: document.getElementById("mediaInput").files && document.getElementById("mediaInput").files[0]
+          ? document.getElementById("mediaInput").files[0].name
+          : "No attachment",
+        notes: document.getElementById("notesInput").value || "",
+        status: document.getElementById("statusSelect").value || "Open",
+        disposition: document.getElementById("dispositionInput").value || "none"
+      };
+    }
+
+    function createCurrentBug() {
+      const bugs = getBugList();
+      const bug = createBugObject();
+      const existingIndex = bugs.findIndex(item => item.issueKey === bug.issueKey);
+      if (existingIndex !== -1) {
+        bugs[existingIndex] = bug;
+      } else {
+        bugs.unshift(bug);
+      }
+      saveBugList(bugs);
+      renderBugTable();
+      renderBoard();
+      return bug;
+    }
+
+    function downloadBugReport() {
+      const bug = createBugObject();
+      const report = [
+        `Issue: ${bug.issueKey}`,
+        `Summary: ${bug.summary}`,
+        `Status: ${bug.status}`,
+        `Severity: ${bug.severity}`,
+        `Environment: ${bug.environment}`,
+        `Repro rate: ${bug.reproRate}`,
+        `Build: ${bug.build}`,
+        `Labels: ${bug.labels || "none"}`,
+        `Developer disposition: ${normalizeDisposition(bug.disposition)}`,
+        "",
+        "Description",
+        bug.description || "None",
+        "",
+        "Steps to reproduce",
+        bug.steps || "None",
+        "",
+        "Observed results",
+        bug.actual || "None",
+        "",
+        "Expected results",
+        bug.expected || "None",
+        "",
+        "Additional notes",
+        bug.notes || "None",
+        "",
+        `Media: ${bug.media}`
+      ].join("\n");
+      const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `${bug.issueKey || "bug-report"}-report.txt`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(downloadUrl);
+    }
+
+    function downloadTextFile(filename, content, type) {
+      const blob = new Blob([content], { type: type || "text/plain;charset=utf-8" });
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(downloadUrl);
+    }
+
+    function loadGameDemos() {
+      saveBugList(gameDemoData.bugs);
+      saveTaskList(gameDemoData.tasks);
+      saveCaseList(gameDemoData.cases);
+      populateFormFromBug(gameDemoData.bugs[0]);
+      renderBugTable();
+      renderTaskTable();
+      renderCaseTable();
+      renderBoard();
+      showTab("bugs-tab");
+    }
+
+    function downloadQAData() {
+      const data = {
+        exportedAt: new Date().toISOString(),
+        bugs: getBugList(),
+        tasks: getTaskList(),
+        testCases: getCaseList()
+      };
+      downloadTextFile("lotus-qa-data.json", JSON.stringify(data, null, 2), "application/json;charset=utf-8");
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function buildPortfolioDocument() {
+      const bugs = getBugList();
+      const tasks = getTaskList();
+      const cases = getCaseList();
+      const gameNames = ["Elden Ring", "NBA 2K27", "Silent Hill f"];
+      const gameSections = gameNames.map(game => {
+        const gameBugs = bugs.filter(item => item.game === game);
+        const gameTasks = tasks.filter(item => item.game === game);
+        const gameCases = cases.filter(item => item.game === game);
+        return `
+          <section class="game-section">
+            <div class="game-heading"><span class="eyebrow">QA portfolio sample</span><h2>${escapeHtml(game)}</h2></div>
+            <div class="metrics"><span>${gameBugs.length} bug reports</span><span>${gameCases.length} test cases</span><span>${gameTasks.length} tasks</span></div>
+            <div class="columns">
+              <div><h3>Bug reports</h3>${gameBugs.map(bug => `<article class="item"><div class="item-top"><strong>${escapeHtml(bug.issueKey)}</strong><span class="pill ${escapeHtml(bug.severity)}">${escapeHtml(bug.severity)}</span></div><h4>${escapeHtml(bug.summary)}</h4><p>${escapeHtml(bug.description)}</p><small>${escapeHtml(bug.environment)} | ${escapeHtml(bug.reproRate)} | ${escapeHtml(bug.status)}</small></article>`).join("")}</div>
+              <div><h3>Test cases</h3>${gameCases.map(testCase => `<article class="item"><div class="item-top"><strong>${escapeHtml(testCase.result)}</strong><span class="pill">Test case</span></div><h4>${escapeHtml(testCase.name)}</h4><p>${escapeHtml(testCase.steps).replace(/\n/g, "<br>")}</p></article>`).join("")}</div>
+              <div><h3>Tasks</h3>${gameTasks.map(task => `<article class="item"><div class="item-top"><strong>${escapeHtml(task.status)}</strong><span class="pill">${escapeHtml(task.owner)}</span></div><h4>${escapeHtml(task.title)}</h4><p>${escapeHtml(task.notes)}</p></article>`).join("")}</div>
+            </div>
+          </section>`;
+      }).join("");
+
+      return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Game QA Portfolio</title>
+<style>
+:root{--ink:#17221f;--muted:#63736c;--paper:#f4f1e9;--card:#fffdf8;--line:#d8d8c9;--accent:#b64f32;--teal:#1f6b63}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.5}.wrap{max-width:1180px;margin:auto;padding:32px 22px 72px}.hero{padding:56px 0 42px;border-bottom:1px solid var(--line)}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font:700 11px/1.2 Arial,sans-serif;color:var(--accent)}h1{font-size:clamp(42px,7vw,82px);line-height:.98;max-width:800px;margin:18px 0;color:var(--ink)}.intro{max-width:650px;font-size:20px;color:var(--muted)}.profile{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}.profile span,.metrics span,.pill{border:1px solid var(--line);border-radius:999px;padding:7px 11px;font:700 11px Arial,sans-serif;color:var(--teal);background:#f7faf5}.game-section{padding:44px 0;border-bottom:1px solid var(--line)}.game-heading{display:flex;align-items:end;justify-content:space-between;gap:20px}.game-heading h2{font-size:42px;line-height:1;margin:10px 0 0}.metrics{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 22px}.columns{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.columns h3{font:700 12px Arial,sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 10px}.item{background:var(--card);border:1px solid var(--line);padding:16px;margin-bottom:12px;box-shadow:4px 4px 0 rgba(31,107,99,.08)}.item-top{display:flex;justify-content:space-between;gap:8px;align-items:center;font:700 11px Arial,sans-serif;color:var(--teal);text-transform:uppercase}.item h4{font-size:18px;line-height:1.15;margin:10px 0 8px}.item p{color:var(--muted);margin:0 0 10px;font-size:14px}.item small{font:700 10px Arial,sans-serif;color:var(--accent);text-transform:uppercase;letter-spacing:.04em}.pill{padding:4px 8px;font-size:10px}.pill.critical{color:#a33434;background:#ffe8e8}.pill.major{color:#a76500;background:#fff5d9}.pill.minor{color:#3b5cc0;background:#edf3ff}.footer{padding-top:32px;color:var(--muted);font:12px Arial,sans-serif}@media(max-width:800px){.columns{grid-template-columns:1fr}.game-heading{display:block}.game-heading h2{font-size:34px}}
+</style></head><body><main class="wrap"><header class="hero"><span class="eyebrow">Game quality assurance portfolio</span><h1>Finding the moments that break the experience.</h1><p class="intro">A practical sample of structured bug reporting, regression thinking, and cross-discipline task planning across three very different game worlds.</p><div class="profile"><span>Bug triage</span><span>Reproduction analysis</span><span>Regression design</span><span>Cross-functional communication</span></div></header>${gameSections}<footer class="footer">Prepared from a Lotus QA Lab working set on ${escapeHtml(new Date().toLocaleDateString())}. Samples are fictional training artifacts created to demonstrate QA practice.</footer></main></body></html>`;
+    }
+
+    function downloadPortfolio() {
+      const portfolio = buildPortfolioDocument()
+        .replace("<title>Game QA Portfolio</title>", "<title>Sion's QA Portfolio</title>")
+        .replace("Game quality assurance portfolio", "Sion's QA Portfolio")
+        .replace("cross-discipline task planning", "game QA task planning")
+        .replace("Cross-functional communication", "QA tester and analyst workflows");
+      downloadTextFile("sions-qa-portfolio.html", portfolio, "text/html;charset=utf-8");
+    }
+
+    function addTask() {
+      const title = document.getElementById("taskTitleInput").value.trim();
+      const owner = document.getElementById("taskOwnerInput").value.trim() || "Unassigned";
+      const status = normalizeTaskStatus(document.getElementById("taskStatusInput").value || "Backlog");
+      const notes = document.getElementById("taskNotesInput").value.trim();
+      if (!title) return;
+
+      const tasks = getTaskList();
+      tasks.push({ id: `task-${Date.now()}`, title, owner, status, notes });
+      saveTaskList(tasks);
+      renderTaskTable();
+      renderBoard();
+      document.getElementById("taskTitleInput").value = "";
+      document.getElementById("taskOwnerInput").value = "QA Tester";
+      document.getElementById("taskStatusInput").value = "Backlog";
+      document.getElementById("taskNotesInput").value = "";
+    }
+
+    function addCase() {
+      const name = document.getElementById("caseNameInput").value.trim();
+      const steps = document.getElementById("caseStepsInput").value.trim();
+      const result = document.getElementById("caseResultInput").value || "Pass";
+
+      if (!name || !steps) return;
+
+      const cases = getCaseList();
+      cases.push({ id: `case-${Date.now()}`, name, result, steps });
+      saveCaseList(cases);
+      renderCaseTable();
+      document.getElementById("caseNameInput").value = "";
+      document.getElementById("caseStepsInput").value = "";
+      document.getElementById("caseResultInput").value = "Pass";
+    }
+
+    function renderBoard() {
+      renderBugBoard();
+      renderTaskBoard();
+    }
+
+    function renderBugBoard() {
+      const columns = ["Open", "In Progress", "Review", "Resolved", "Closed"];
+      const bugs = getBugList();
+
+      columns.forEach(column => {
+        const zone = document.getElementById("column-" + column);
+        const matches = bugs.filter(bug => normalizeStatus(bug.status) === column);
+
+        if (!matches.length) {
+          zone.innerHTML = '<div class="empty-state">No issues</div>';
+          return;
+        }
+
+        zone.innerHTML = matches.map(bug => {
+          const dispositionText = normalizeDisposition(bug.disposition);
+          const dispositionClass = bug.disposition === "shippable" ? "shippable" :
+            bug.disposition === "duplicate" ? "duplicate" :
+            bug.disposition === "cnr" ? "cnr" : "";
+
+          return `
+            <article class="board-card" draggable="true" data-type="bug" data-id="${bug.issueKey}">
+              <a href="#" class="card-title" data-key="${bug.issueKey}">${bug.issueKey}</a>
+              <p class="card-summary">${bug.summary || "Untitled bug"}</p>
+              <div class="card-meta">
+                <div class="tags">
+                  <span class="tag ${bug.severity || 'major'}">${bug.severity || 'major'}</span>
+                  ${dispositionClass ? '<span class="disposition ' + dispositionClass + '">' + dispositionText + '</span>' : '<span>' + dispositionText + '</span>'}
+                </div>
+              </div>
+            </article>
+          `;
+        }).join("");
+      });
+
+      attachBoardCardEvents();
+    }
+
+    function renderTaskBoard() {
+      const columns = ["Backlog", "In Progress", "Blocked", "Done"];
+      const tasks = getTaskList();
+
+      columns.forEach(column => {
+        const zone = document.getElementById("task-column-" + column);
+        const matches = tasks.filter(task => normalizeTaskStatus(task.status) === column);
+
+        if (!matches.length) {
+          zone.innerHTML = '<div class="empty-state">No tasks</div>';
+          return;
+        }
+
+        zone.innerHTML = matches.map(task => `
+          <article class="board-card" draggable="true" data-type="task" data-id="${task.id}">
+            <a href="#" class="card-title" data-task-id="${task.id}">${task.title}</a>
+            <p class="card-summary">${task.notes || "No notes yet"}</p>
+            <div class="card-meta">
+              <div class="tags">
+                <span class="tag minor">${task.owner || "Unassigned"}</span>
+              </div>
+            </div>
+          </article>
+        `).join("");
+      });
+
+      attachBoardCardEvents();
+    }
+
+    function attachBoardCardEvents() {
+      document.querySelectorAll(".board-card").forEach(card => {
+        card.addEventListener("dragstart", () => {
+          card.classList.add("dragging");
+          card.setAttribute("data-dragging", "true");
+        });
+
+        card.addEventListener("dragend", () => {
+          card.classList.remove("dragging");
+          card.removeAttribute("data-dragging");
+        });
+
+        card.addEventListener("click", (event) => {
+          const type = event.currentTarget.dataset.type;
+          if (type === "bug") {
+            const key = event.currentTarget.dataset.id;
+            const bug = getBugList().find(item => item.issueKey === key);
+            if (bug) {
+              populateFormFromBug(bug);
+              showTab("form-panel");
+            }
+          } else if (type === "task") {
+            const id = event.currentTarget.dataset.id;
+            const task = getTaskList().find(item => item.id === id);
+            if (task) {
+              document.getElementById("taskTitleInput").value = task.title;
+              document.getElementById("taskOwnerInput").value = task.owner;
+              document.getElementById("taskStatusInput").value = normalizeTaskStatus(task.status);
+              document.getElementById("taskNotesInput").value = task.notes || "";
+              showTab("tasks-tab");
+            }
+          }
+        });
+      });
+
+      document.querySelectorAll(".drop-zone").forEach(zone => {
+        zone.addEventListener("dragover", event => {
+          event.preventDefault();
+          zone.classList.add("dragover");
+        });
+
+        zone.addEventListener("dragleave", () => {
+          zone.classList.remove("dragover");
+        });
+
+        zone.addEventListener("drop", event => {
+          event.preventDefault();
+          zone.classList.remove("dragover");
+          const dragging = document.querySelector(".board-card[data-dragging='true']");
+          if (!dragging) return;
+
+          const type = dragging.dataset.type;
+          const id = dragging.dataset.id;
+
+          if (type === "bug") {
+            const bugs = getBugList();
+            const bug = bugs.find(item => item.issueKey === id);
+            if (!bug) return;
+            const columnName = zone.id.replace("column-", "");
+            bug.status = columnName;
+            saveBugList(bugs);
+            renderBugTable();
+            renderBoard();
+            populateFormFromBug(bug);
+          }
+
+          if (type === "task") {
+            const tasks = getTaskList();
+            const task = tasks.find(item => item.id === id);
+            if (!task) return;
+            const columnName = zone.id.replace("task-column-", "");
+            task.status = normalizeTaskStatus(columnName);
+            saveTaskList(tasks);
+            renderTaskTable();
+            renderBoard();
+          }
+        });
+      });
+    }
+
+    function showTab(id) {
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.tab === id.replace("-panel", "-tab") || tab.dataset.tab === id);
+      });
+      document.querySelectorAll(".panel").forEach(panel => {
+        panel.classList.toggle("active", panel.id === id);
+      });
+    }
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.tab;
+        const panelId = target === "bugs-tab" ? "bugs-tab" :
+          target === "tasks-tab" ? "tasks-tab" :
+          target === "cases-tab" ? "cases-tab" :
+          target === "board-tab" ? "board-tab" :
+          target === "completed-panel" ? "completed-panel" :
+          "form-panel";
+
+        document.querySelectorAll(".panel").forEach(panel => {
+          panel.classList.toggle("active", panel.id === panelId);
+        });
+
+        document.querySelectorAll(".tab").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.tab === target);
+        });
+      });
+    });
+
+    document.querySelectorAll("[data-tab]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.tab;
+        const panelId = target === "bugs-tab" ? "bugs-tab" :
+          target === "tasks-tab" ? "tasks-tab" :
+          target === "cases-tab" ? "cases-tab" :
+          target === "board-tab" ? "board-tab" :
+          target === "completed-panel" ? "completed-panel" :
+          "form-panel";
+
+        document.querySelectorAll(".panel").forEach(panel => {
+          panel.classList.toggle("active", panel.id === panelId);
+        });
+
+        document.querySelectorAll(".tab").forEach(tabBtn => {
+          tabBtn.classList.toggle("active", tabBtn.dataset.tab === target);
+        });
+      });
+    });
+
+    document.getElementById("statusSelect").addEventListener("change", (e) => {
+      applyStatusBadge(e.target.value);
+    });
+
+    document.getElementById("saveBugBtn").addEventListener("click", () => {
+      const bug = createCurrentBug();
+      populateFormFromBug(bug);
+      renderBugTable();
+      renderBoard();
+    });
+
+    document.getElementById("downloadBugBtn").addEventListener("click", downloadBugReport);
+    document.getElementById("loadDemoBtn").addEventListener("click", loadGameDemos);
+    document.getElementById("downloadDataBtn").addEventListener("click", downloadQAData);
+    document.getElementById("downloadPortfolioBtn").addEventListener("click", downloadPortfolio);
+    document.getElementById("openPortfolioBtn").addEventListener("click", () => {
+      window.open("portfolio.html", "_blank", "noopener");
+    });
+
+    document.getElementById("createIssueBtn").addEventListener("click", () => {
+      const bug = createCurrentBug();
+      populateFormFromBug(bug);
+      renderBugTable();
+      renderBoard();
+      showTab("board-tab");
+    });
+
+    document.getElementById("newIssueBtn").addEventListener("click", () => {
+      document.getElementById("issueLink").textContent = nextIssueKey();
+      document.getElementById("summaryInput").value = "";
+      document.getElementById("descriptionInput").value = "";
+      document.getElementById("stepsInput").value = "";
+      document.getElementById("actualInput").value = "";
+      document.getElementById("expectedInput").value = "";
+      document.getElementById("notesInput").value = "";
+      document.getElementById("statusSelect").value = "Open";
+      applyStatusBadge("Open");
+      document.getElementById("dispositionInput").value = "none";
+      document.getElementById("severityInput").value = "major";
+      document.getElementById("environmentInput").value = "gameplay";
+      document.getElementById("reproRateInput").value = "8/10 - 80%";
+      updatePreview();
+    });
+
+    document.getElementById("addTaskBtn").addEventListener("click", addTask);
+    document.getElementById("addCaseBtn").addEventListener("click", addCase);
+
+    document.getElementById("summaryInput").addEventListener("input", updatePreview);
+    document.getElementById("descriptionInput").addEventListener("input", updatePreview);
+    document.getElementById("reproRateInput").addEventListener("change", updatePreview);
+    document.getElementById("severityInput").addEventListener("change", updatePreview);
+    document.getElementById("environmentInput").addEventListener("change", updatePreview);
+    document.getElementById("stepsInput").addEventListener("input", updatePreview);
+    document.getElementById("actualInput").addEventListener("input", updatePreview);
+    document.getElementById("expectedInput").addEventListener("input", updatePreview);
+    document.getElementById("buildInput").addEventListener("input", updatePreview);
+    document.getElementById("labelsInput").addEventListener("input", updatePreview);
+    document.getElementById("notesInput").addEventListener("input", updatePreview);
+    document.getElementById("dispositionInput").addEventListener("change", updatePreview);
+    document.getElementById("mediaInput").addEventListener("change", updatePreview);
+
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest(".entry-link");
+      if (!button) return;
+
+      const key = button.dataset.key;
+      const bug = getBugList().find(item => item.issueKey === key);
+      if (bug) {
+        populateFormFromBug(bug);
+      }
+    });
+
+    populateFormFromBug(getBugList()[0]);
+    renderBugTable();
+    renderTaskTable();
+    renderCaseTable();
+    renderBoard();
+  </script>
+</body>
+</html>
+

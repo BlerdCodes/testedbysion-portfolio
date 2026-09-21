@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elden Ring QA Case Study | Sion's QA Portfolio</title>
+  <style>
+    :root{--ink:#17221f;--muted:#63736c;--paper:#f4f1e9;--card:#fffdf8;--line:#d8d8c9;--accent:#b64f32;--teal:#1f6b63;--red:#a33434;--amber:#a76500}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.5}.wrap{max-width:1120px;margin:auto;padding:28px 22px 70px}a{color:var(--teal)}.back{font:700 12px Arial,sans-serif;text-decoration:none}.hero{padding:48px 0 34px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--accent);font:700 11px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase}.hero h1{font-size:clamp(42px,7vw,78px);line-height:.95;margin:16px 0}.hero p{max-width:680px;color:var(--muted);font-size:19px}.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.stats span,.pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#f7faf5;color:var(--teal);font:700 11px Arial,sans-serif}.section{padding:36px 0;border-bottom:1px solid var(--line)}h2{font-size:32px;margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{background:var(--card);border:1px solid var(--line);padding:18px;box-shadow:4px 4px 0 rgba(31,107,99,.08)}.card h3{font-size:19px;line-height:1.15;margin:11px 0}.card p{color:var(--muted);white-space:pre-line}.meta{color:var(--accent);font:700 10px Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}.critical{color:var(--red)}.major{color:var(--amber)}.footer{padding-top:28px;color:var(--muted);font:12px Arial,sans-serif}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body><main class="wrap"><a class="back" href="portfolio.html">Back to Sion's QA Portfolio</a><header class="hero"><span class="eyebrow">Game QA case study</span><h1>Elden Ring</h1><p>Focused examples of reproduction analysis, HUD validation, transition testing, and QA task planning.</p><div class="stats"><span>3 bug reports</span><span>2 test cases</span><span>2 QA tasks</span><span>Build 1.10.2</span></div></header>
+<section class="section"><h2>Bug reports</h2><div class="grid"><article class="card"><div class="meta">ER-101 · Major · Open · 80% repro</div><h3>Spirit Ash summon fails near the Consecrated Snowfield catacomb entrance</h3><p>The summon pool is visible, but the Spirit Calling Bell produces no summon prompt in a valid co-op restricted area.
+
+Steps: Travel to the entrance; equip the Spirit Calling Bell; enter the boss approach; attempt to summon a Spirit Ash.
+
+Observed results: The prompt does not appear until the area is reloaded.
+
+Expected results: The summon prompt appears when the player enters the valid encounter area.</p></article><article class="card"><div class="meta">ER-102 · Minor · In Progress · 60% repro</div><h3>Torrent remains unavailable after leaving a cave elevator transition</h3><p>The mount whistle is disabled after a vertical loading transition even though the player is outdoors.
+
+Steps: Enter a cave elevator; ride to the outdoor exit; attempt to summon Torrent.
+
+Observed results: The action stays disabled until the map is opened and closed.
+
+Expected results: Torrent is available immediately in the outdoor area.</p></article><article class="card"><div class="meta">ER-103 · Major · Review · 40% repro</div><h3>Boss health bar briefly disappears after a phase transition</h3><p>The phase transition completes, but the HUD health bar is hidden while damage continues to register.
+
+Steps: Start a two-phase remembrance fight; trigger phase two; continue attacking.
+
+Observed results: The bar disappears and returns after damage has registered.
+
+Expected results: The health bar remains visible throughout the transition.</p></article></div></section>
+<section class="section"><h2>Test cases</h2><div class="grid"><article class="card"><div class="meta">Fail · Regression</div><h3>Spirit Ash prompt appears in a valid encounter area</h3><p>Equip the bell, enter a valid boss approach, verify the prompt, then repeat after fast travel.</p></article><article class="card"><div class="meta">Pass · Regression</div><h3>Boss HUD remains visible during phase transition</h3><p>Start a two-phase fight, trigger the transition, and confirm the health bar and damage updates remain visible.</p></article></div></section>
+<section class="section"><h2>QA tasks</h2><div class="grid"><article class="card"><div class="meta">In Progress · QA Tester</div><h3>Capture summon-state logs around catacomb transitions</h3><p>Compare fast travel and grace reload paths.</p></article><article class="card"><div class="meta">Backlog · QA Analyst</div><h3>Add phase-transition HUD regression coverage</h3><p>Include remembrance bosses with two phases.</p></article></div></section><footer class="footer">Fictional training artifact created to demonstrate game QA practice.</footer></main></body></html>
