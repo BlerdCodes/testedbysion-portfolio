@@ -473,6 +473,7 @@
         <button class="button" id="saveBugBtn" type="button">Save issue</button>
         <button class="button" id="downloadBugBtn" type="button">Download report</button>
         <button class="button" id="loadDemoBtn" type="button">Load game demos</button>
+        <button class="button" id="loadValorantBtn" type="button">Load Valorant bugs</button>
         <button class="button" id="downloadDataBtn" type="button">Download QA data</button>
         <button class="button" id="downloadPortfolioBtn" type="button">Download portfolio</button>
         <button class="button" id="openPortfolioBtn" type="button">Open portfolio</button>
@@ -1068,6 +1069,66 @@
       ]
     };
 
+    const valorantBugData = [
+      {
+        issueKey: "VAL-401",
+        game: "VALORANT",
+        summary: "Round-end scoreboard shows stale combat report after reconnect",
+        description: "After a player reconnects during a round, the round-end scoreboard can display the previous round's combat report values.",
+        reproRate: "7/10 - 70%",
+        severity: "major",
+        environment: "gameplay",
+        steps: "1. Join a competitive match\n2. Disconnect during an active round\n3. Reconnect before the round ends\n4. Open the round-end scoreboard",
+        actual: "The combat report shows stale damage and weapon information from the previous round.",
+        expected: "The scoreboard should show the reconnecting player's current round results.",
+        build: "10.04.00",
+        labels: "valorant, multiplayer, scoreboard, reconnect",
+        media: "No attachment",
+        notes: "Compare reconnect timing across PC and console compatibility builds.",
+        status: "Open",
+        disposition: "none"
+      },
+      {
+        issueKey: "VAL-402",
+        game: "VALORANT",
+        summary: "Killjoy turret remains active after owner is eliminated during round reset",
+        description: "A Killjoy turret can remain visible and continue firing briefly after its owner is eliminated at the round boundary.",
+        reproRate: "6/10 - 60%",
+        severity: "critical",
+        environment: "gameplay",
+        steps: "1. Select Killjoy\n2. Deploy the turret near a site entrance\n3. Be eliminated as the round timer expires\n4. Observe the turret during the reset",
+        actual: "The turret remains active into the round reset and can reveal or damage players.",
+        expected: "Placed abilities should be cleaned up before the next round begins.",
+        build: "10.04.00",
+        labels: "valorant, killjoy, abilities, round-reset",
+        media: "No attachment",
+        notes: "Verify behavior with other persistent deployables during the same reset window.",
+        status: "In Progress",
+        disposition: "none"
+      },
+      {
+        issueKey: "VAL-403",
+        game: "VALORANT",
+        summary: "Party voice indicator overlaps minimap on ultrawide resolution",
+        description: "The active party voice indicator overlaps the minimap when the game is displayed at a supported ultrawide resolution.",
+        reproRate: "10/10 - 100%",
+        severity: "minor",
+        environment: "map/visual",
+        steps: "1. Set the display to 3440x1440\n2. Join a party voice channel\n3. Enter a match\n4. Inspect the upper-right HUD",
+        actual: "The voice indicator partially covers the minimap border and map icons.",
+        expected: "HUD elements should remain separated and readable at supported aspect ratios.",
+        build: "10.04.00",
+        labels: "valorant, ui, ultrawide, minimap",
+        media: "No attachment",
+        notes: "Add to the resolution and HUD scaling regression matrix.",
+        status: "Review",
+        disposition: "none"
+      }
+    ];
+
+    let editingTaskId = null;
+    let editingCaseId = null;
+
     function getBugList() {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.bugs) || "[]");
       return saved.length ? saved : [defaultBug];
@@ -1233,7 +1294,7 @@
       const body = document.getElementById("taskTableBody");
       body.innerHTML = tasks.map(task => `
         <tr>
-          <td>${task.title}</td>
+          <td><button class="entry-link task-entry-link" type="button" data-task-id="${task.id}">${task.title}</button></td>
           <td>${task.owner}</td>
           <td><span class="status-pill ${statusClass(normalizeTaskStatus(task.status))}">${normalizeTaskStatus(task.status)}</span></td>
           <td>${task.notes || "-"}</td>
@@ -1246,7 +1307,7 @@
       const body = document.getElementById("caseTableBody");
       body.innerHTML = cases.map(testCase => `
         <tr>
-          <td>${testCase.name}</td>
+          <td><button class="entry-link case-entry-link" type="button" data-case-id="${testCase.id}">${testCase.name}</button></td>
           <td>${testCase.result}</td>
           <td>${(testCase.steps || "").replace(/\n/g, "<br>")}</td>
         </tr>
@@ -1355,6 +1416,15 @@
       showTab("bugs-tab");
     }
 
+    function loadValorantBugs() {
+      const bugs = getBugList().filter(bug => bug.game !== "VALORANT");
+      saveBugList(valorantBugData.concat(bugs));
+      populateFormFromBug(valorantBugData[0]);
+      renderBugTable();
+      renderBoard();
+      showTab("bugs-tab");
+    }
+
     function downloadQAData() {
       const data = {
         exportedAt: new Date().toISOString(),
@@ -1419,10 +1489,18 @@
       if (!title) return;
 
       const tasks = getTaskList();
-      tasks.push({ id: `task-${Date.now()}`, title, owner, status, notes });
+      const task = { id: editingTaskId || `task-${Date.now()}`, title, owner, status, notes };
+      const existingIndex = tasks.findIndex(item => item.id === editingTaskId);
+      if (existingIndex >= 0) {
+        tasks[existingIndex] = task;
+      } else {
+        tasks.push(task);
+      }
       saveTaskList(tasks);
       renderTaskTable();
       renderBoard();
+      editingTaskId = null;
+      document.getElementById("addTaskBtn").textContent = "Add task";
       document.getElementById("taskTitleInput").value = "";
       document.getElementById("taskOwnerInput").value = "QA Tester";
       document.getElementById("taskStatusInput").value = "Backlog";
@@ -1437,9 +1515,17 @@
       if (!name || !steps) return;
 
       const cases = getCaseList();
-      cases.push({ id: `case-${Date.now()}`, name, result, steps });
+      const testCase = { id: editingCaseId || `case-${Date.now()}`, name, result, steps };
+      const existingIndex = cases.findIndex(item => item.id === editingCaseId);
+      if (existingIndex >= 0) {
+        cases[existingIndex] = testCase;
+      } else {
+        cases.push(testCase);
+      }
       saveCaseList(cases);
       renderCaseTable();
+      editingCaseId = null;
+      document.getElementById("addCaseBtn").textContent = "Add test case";
       document.getElementById("caseNameInput").value = "";
       document.getElementById("caseStepsInput").value = "";
       document.getElementById("caseResultInput").value = "Pass";
@@ -1541,10 +1627,12 @@
             const id = event.currentTarget.dataset.id;
             const task = getTaskList().find(item => item.id === id);
             if (task) {
+              editingTaskId = task.id;
               document.getElementById("taskTitleInput").value = task.title;
               document.getElementById("taskOwnerInput").value = task.owner;
               document.getElementById("taskStatusInput").value = normalizeTaskStatus(task.status);
               document.getElementById("taskNotesInput").value = task.notes || "";
+              document.getElementById("addTaskBtn").textContent = "Update task";
               showTab("tasks-tab");
             }
           }
@@ -1658,6 +1746,7 @@
 
     document.getElementById("downloadBugBtn").addEventListener("click", downloadBugReport);
     document.getElementById("loadDemoBtn").addEventListener("click", loadGameDemos);
+    document.getElementById("loadValorantBtn").addEventListener("click", loadValorantBugs);
     document.getElementById("downloadDataBtn").addEventListener("click", downloadQAData);
     document.getElementById("downloadPortfolioBtn").addEventListener("click", downloadPortfolio);
     document.getElementById("openPortfolioBtn").addEventListener("click", () => {
@@ -1691,6 +1780,36 @@
 
     document.getElementById("addTaskBtn").addEventListener("click", addTask);
     document.getElementById("addCaseBtn").addEventListener("click", addCase);
+
+    document.addEventListener("click", (event) => {
+      const taskButton = event.target.closest(".task-entry-link");
+      if (taskButton) {
+        const task = getTaskList().find(item => item.id === taskButton.dataset.taskId);
+        if (task) {
+          editingTaskId = task.id;
+          document.getElementById("taskTitleInput").value = task.title;
+          document.getElementById("taskOwnerInput").value = task.owner;
+          document.getElementById("taskStatusInput").value = normalizeTaskStatus(task.status);
+          document.getElementById("taskNotesInput").value = task.notes || "";
+          document.getElementById("addTaskBtn").textContent = "Update task";
+          showTab("tasks-tab");
+        }
+        return;
+      }
+
+      const caseButton = event.target.closest(".case-entry-link");
+      if (caseButton) {
+        const testCase = getCaseList().find(item => item.id === caseButton.dataset.caseId);
+        if (testCase) {
+          editingCaseId = testCase.id;
+          document.getElementById("caseNameInput").value = testCase.name;
+          document.getElementById("caseResultInput").value = testCase.result;
+          document.getElementById("caseStepsInput").value = testCase.steps || "";
+          document.getElementById("addCaseBtn").textContent = "Update test case";
+          showTab("cases-tab");
+        }
+      }
+    });
 
     document.getElementById("summaryInput").addEventListener("input", updatePreview);
     document.getElementById("descriptionInput").addEventListener("input", updatePreview);
