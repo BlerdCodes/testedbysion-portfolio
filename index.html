@@ -12,10 +12,11 @@
       --ink: #15181d;
       --muted: #59656d;
       --line: #dfe2dc;
-      --accent: #2f6ee8;
-      --accent-2: #1b2b46;
+      --accent: #315fdb;
+      --accent-2: #1f2b3d;
       --shadow: rgba(14, 24, 37, 0.08);
       --soft: #ebf1ff;
+      --hero-glow: rgba(49, 95, 219, 0.06);
     }
 
     * { box-sizing: border-box; }
@@ -40,7 +41,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 18px;
-      padding-bottom: 18px;
+      padding: 8px 0 18px;
       border-bottom: 1px solid var(--line);
     }
 
@@ -49,6 +50,7 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       font-weight: 800;
+      color: var(--ink);
     }
 
     .nav {
@@ -73,7 +75,12 @@
       grid-template-columns: 1.2fr 0.8fr;
       gap: 34px;
       align-items: center;
-      padding: 34px 0 12px;
+      padding: 34px 20px 12px;
+      margin-top: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.08));
+      border: 1px solid rgba(17, 24, 31, 0.05);
+      border-radius: 28px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 18px 40px var(--hero-glow);
     }
 
     .eyebrow {
@@ -117,12 +124,20 @@
       border-radius: 12px;
       text-decoration: none;
       font-weight: 700;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
 
     .button:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 18px var(--shadow);
+    }
+
+    .button.primary:hover {
+      border-color: rgba(21, 24, 29, 0.92);
+    }
+
+    .button.secondary:hover {
+      border-color: rgba(49, 95, 219, 0.4);
     }
 
     .button.primary {
@@ -168,15 +183,18 @@
       background: linear-gradient(135deg, #f9f4f1, #ebf0f8);
       border: 10px solid rgba(17, 24, 31, 0.96);
       box-shadow: 0 24px 48px rgba(18, 30, 42, 0.12);
+      filter: saturate(1.08) contrast(1.04);
     }
 
     .portrait-wrap img {
-      width: 100%;
-      height: 100%;
+      width: 110%;
+      height: 110%;
       object-fit: cover;
+      object-position: center 20%;
       display: block;
       border-radius: 50%;
       background: #e9e6e2;
+      transform: translate(-5%, -2%);
     }
 
     .headshot-fallback {
@@ -231,12 +249,13 @@
       border-radius: 18px;
       padding: 20px 18px 18px;
       box-shadow: 0 10px 18px var(--shadow);
-      transition: transform 0.15s ease, border-color 0.15s ease;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .game-card:hover {
       transform: translateY(-4px);
-      border-color: rgba(47,110,232,0.5);
+      border-color: rgba(49, 95, 219, 0.4);
+      box-shadow: 0 16px 28px rgba(18, 30, 42, 0.1);
     }
 
     .card-tag {
@@ -311,7 +330,7 @@
         <a href="#portfolio">Portfolio</a>
         <a href="lotus-qa-lab.html">QA Lab</a>
         <a href="#case-studies">Case Studies</a>
-        <a href="mailto:sionwesleyqa@gmail.com">Contact</a>
+        <a href="mailto:siphywes@gmail.com">Contact</a>
       </nav>
     </header>
 
@@ -397,7 +416,7 @@
 
       <footer class="footer">
         <div>QA focused on bug reporting, regression testing, and release-readiness thinking.</div>
-        <div><a href="mailto:sionwesleyqa@gmail.com">sionwesleyqa@gmail.com</a></div>
+        <div><a href="mailto:siphywes@gmail.com">siphywes@gmail.com</a></div>
       </footer>
     </main>
   </div>
