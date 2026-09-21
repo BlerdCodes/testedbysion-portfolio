@@ -473,7 +473,7 @@
         <button class="button" id="saveBugBtn" type="button">Save issue</button>
         <button class="button" id="downloadBugBtn" type="button">Download report</button>
         <button class="button" id="loadDemoBtn" type="button">Load game demos</button>
-        <button class="button" id="loadValorantBtn" type="button">Show Valorant bugs</button>
+        <button class="button" id="loadValorantBtn" type="button">Add Valorant bugs</button>
         <button class="button" id="downloadDataBtn" type="button">Download QA data</button>
         <button class="button" id="downloadPortfolioBtn" type="button">Download portfolio</button>
         <button class="button" id="openPortfolioBtn" type="button">Open portfolio</button>
@@ -485,7 +485,6 @@
       <button class="tab active" type="button" data-tab="form-panel">Bug report</button>
       <button class="tab" type="button" data-tab="completed-panel">Completed view</button>
       <button class="tab" type="button" data-tab="bugs-tab">Bug list</button>
-      <button class="tab" type="button" data-tab="valorant-tab">Valorant bugs</button>
       <button class="tab" type="button" data-tab="tasks-tab">QA tasks</button>
       <button class="tab" type="button" data-tab="cases-tab">Test cases</button>
       <button class="tab" type="button" data-tab="board-tab">Kanban</button>
@@ -700,25 +699,6 @@
             </tr>
           </thead>
           <tbody id="bugTableBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section id="valorant-tab" class="panel">
-      <div class="table-wrap">
-        <h2 style="margin:0 0 6px;">Valorant bug reports</h2>
-        <p style="margin:0 0 16px;color:var(--muted);">Standalone Valorant QA samples kept separate from the game demos.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Summary</th>
-              <th>Status</th>
-              <th>Severity</th>
-              <th>Environment</th>
-            </tr>
-          </thead>
-          <tbody id="valorantTableBody"></tbody>
         </table>
       </div>
     </section>
@@ -1152,21 +1132,16 @@
 
     function getBugList() {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.bugs) || "[]");
-      const demoBugs = saved.filter(bug => bug.game !== "VALORANT");
-      return demoBugs.length ? demoBugs : [defaultBug];
+      const separateValorantBugs = JSON.parse(localStorage.getItem(STORAGE_KEYS.valorantBugs) || "[]");
+      const combined = [...saved, ...separateValorantBugs];
+      const uniqueBugs = combined.filter((bug, index, list) =>
+        list.findIndex(item => item.issueKey === bug.issueKey) === index
+      );
+      return uniqueBugs.length ? uniqueBugs : [defaultBug];
     }
 
     function saveBugList(list) {
       localStorage.setItem(STORAGE_KEYS.bugs, JSON.stringify(list));
-    }
-
-    function getValorantBugList() {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.valorantBugs) || "[]");
-      return saved.length ? saved : valorantBugData;
-    }
-
-    function saveValorantBugList(list) {
-      localStorage.setItem(STORAGE_KEYS.valorantBugs, JSON.stringify(list));
     }
 
     function getTaskList() {
@@ -1320,19 +1295,6 @@
       }).join("");
     }
 
-    function renderValorantTable() {
-      const tbody = document.getElementById("valorantTableBody");
-      tbody.innerHTML = getValorantBugList().map(bug => `
-        <tr>
-          <td><button class="entry-link" type="button" data-valorant-key="${bug.issueKey}">${bug.issueKey}</button></td>
-          <td>${bug.summary || "Untitled bug"}</td>
-          <td><span class="status-pill ${statusClass(normalizeStatus(bug.status))}">${normalizeStatus(bug.status)}</span></td>
-          <td><span class="tag ${bug.severity || "major"}">${bug.severity || "major"}</span></td>
-          <td>${bug.environment || "gameplay"}</td>
-        </tr>
-      `).join("");
-    }
-
     function renderTaskTable() {
       const tasks = getTaskList();
       const body = document.getElementById("taskTableBody");
@@ -1461,9 +1423,14 @@
     }
 
     function loadValorantBugs() {
-      saveValorantBugList(valorantBugData);
-      renderValorantTable();
-      showTab("valorant-tab");
+      const bugs = getBugList();
+      const existingKeys = new Set(bugs.map(bug => bug.issueKey));
+      const newBugs = valorantBugData.filter(bug => !existingKeys.has(bug.issueKey));
+      saveBugList([...bugs, ...newBugs]);
+      populateFormFromBug(valorantBugData[0]);
+      renderBugTable();
+      renderBoard();
+      showTab("bugs-tab");
     }
 
     function downloadQAData() {
@@ -1738,7 +1705,6 @@
       tab.addEventListener("click", () => {
         const target = tab.dataset.tab;
         const panelId = target === "bugs-tab" ? "bugs-tab" :
-          target === "valorant-tab" ? "valorant-tab" :
           target === "tasks-tab" ? "tasks-tab" :
           target === "cases-tab" ? "cases-tab" :
           target === "board-tab" ? "board-tab" :
@@ -1759,7 +1725,6 @@
       btn.addEventListener("click", () => {
         const target = btn.dataset.tab;
         const panelId = target === "bugs-tab" ? "bugs-tab" :
-          target === "valorant-tab" ? "valorant-tab" :
           target === "tasks-tab" ? "tasks-tab" :
           target === "cases-tab" ? "cases-tab" :
           target === "board-tab" ? "board-tab" :
@@ -1881,7 +1846,6 @@
 
     populateFormFromBug(getBugList()[0]);
     renderBugTable();
-    renderValorantTable();
     renderTaskTable();
     renderCaseTable();
     renderBoard();
